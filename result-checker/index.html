@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEE / +2 Result Checker — Nepal | Shishir Bhattarai</title>
+  <meta name="description" content="Check your SEE and +2 exam results online. Enter your symbol number to view your grade sheet, GPA, division and subject-wise marks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+
+    /* ── PAGE LAYOUT ── */
+    .result-page {
+      min-height: 100vh;
+      padding: 8rem clamp(1.25rem,5vw,4rem) 5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .result-disclaimer {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--terra);
+      background: var(--terra-pale); padding: 0.35rem 0.85rem;
+      margin-bottom: 1.5rem; border: 1px solid rgba(196,98,45,0.2);
+    }
+
+    /* ── EXAM TOGGLE ── */
+    .exam-toggle {
+      display: flex; gap: 0; margin-bottom: 2.5rem;
+      border: 1px solid var(--line); width: fit-content;
+    }
+    .exam-btn {
+      font-family: var(--sans); font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.65rem 1.8rem; border: none; cursor: pointer;
+      background: var(--white); color: var(--ink-muted);
+      transition: all 0.18s; border-right: 1px solid var(--line);
+    }
+    .exam-btn:last-child { border-right: none; }
+    .exam-btn.active { background: var(--ink); color: var(--cream); }
+    .exam-btn:hover:not(.active) { background: var(--cream); color: var(--ink); }
+
+    /* ── SEARCH CARD ── */
+    .search-card {
+      background: var(--white); border: 1px solid var(--line);
+      padding: 2.5rem; margin-bottom: 2rem;
+    }
+    .search-card-title {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
+      color: var(--ink); margin-bottom: 0.35rem;
+    }
+    .search-card-sub {
+      font-size: 0.83rem; color: var(--ink-muted); margin-bottom: 1.8rem; line-height: 1.6;
+    }
+    .search-row {
+      display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.85rem;
+      align-items: end;
+    }
+    .search-field label {
+      display: block; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 0.45rem;
+    }
+    .search-field input,
+    .search-field select {
+      width: 100%; padding: 0.7rem 0.9rem;
+      border: 1px solid var(--line); background: var(--cream);
+      font-family: var(--sans); font-size: 0.9rem; color: var(--ink);
+      outline: none; transition: border-color 0.2s;
+      -webkit-appearance: none; border-radius: 0;
+    }
+    .search-field input:focus,
+    .search-field select:focus { border-color: var(--terra); }
+    .search-field input::placeholder { color: var(--ink-muted); opacity: 0.5; }
+
+    .check-btn {
+      padding: 0.7rem 1.8rem; background: var(--terra);
+      color: var(--white); font-family: var(--sans);
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      transition: background 0.2s; white-space: nowrap;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .check-btn:hover { background: var(--ink); }
+    .check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .search-error {
+      font-size: 0.82rem; color: #C0392B;
+      background: #FFF0F0; border: 1px solid #F5B9B9;
+      padding: 0.65rem 0.9rem; margin-top: 1rem; display: none;
+    }
+    .search-error.visible { display: block; }
+
+    /* ── LOADING ── */
+    .result-loading {
+      display: none; text-align: center;
+      padding: 3rem; background: var(--white); border: 1px solid var(--line);
+    }
+    .result-loading.visible { display: block; }
+    .loader {
+      width: 36px; height: 36px; border: 3px solid var(--line);
+      border-top-color: var(--terra); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 0.85rem; color: var(--ink-muted); }
+    .loading-steps { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .loading-step {
+      font-size: 0.75rem; color: var(--ink-muted); opacity: 0;
+      transition: opacity 0.4s;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    }
+    .loading-step.show { opacity: 1; }
+    .loading-step .tick { color: #2d6a2d; font-size: 0.8rem; }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      display: none; background: var(--white);
+      border: 1px solid var(--line); overflow: hidden;
+    }
+    .result-card.visible { display: block; }
+
+    /* Header */
+    .rc-header {
+      background: var(--ink); padding: 1.8rem 2rem;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .rc-header-left {}
+    .rc-exam-badge {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--terra-soft);
+      margin-bottom: 0.4rem;
+    }
+    .rc-student-name {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 600;
+      color: var(--cream); line-height: 1.15; margin-bottom: 0.3rem;
+    }
+    .rc-symbol {
+      font-size: 0.8rem; color: rgba(245,240,232,0.5); font-family: var(--sans);
+    }
+    .rc-header-right { text-align: right; }
+    .rc-gpa-label {
+      font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(245,240,232,0.5); margin-bottom: 0.2rem;
+    }
+    .rc-gpa {
+      font-family: var(--serif); font-size: 2.8rem; font-weight: 600;
+      color: var(--terra-soft); line-height: 1;
+    }
+    .rc-division {
+      font-size: 0.75rem; color: rgba(245,240,232,0.6); margin-top: 0.2rem;
+    }
+
+    /* Meta strip */
+    .rc-meta {
+      display: flex; flex-wrap: wrap; gap: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .rc-meta-item {
+      flex: 1; min-width: 120px; padding: 1rem 1.5rem;
+      border-right: 1px solid var(--line);
+    }
+    .rc-meta-item:last-child { border-right: none; }
+    .rc-meta-label {
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 0.3rem;
+    }
+    .rc-meta-value {
+      font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--ink);
+    }
+
+    /* Subject table */
+    .rc-subjects { padding: 1.5rem 2rem; }
+    .rc-subjects-title {
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 1rem; font-weight: 500;
+    }
+    .rc-table { width: 100%; border-collapse: collapse; }
+    .rc-table thead tr {
+      background: var(--cream); border-bottom: 1px solid var(--line);
+    }
+    .rc-table th {
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-muted); font-weight: 500;
+      padding: 0.6rem 0.9rem; text-align: left;
+    }
+    .rc-table th:not(:first-child) { text-align: center; }
+    .rc-table td {
+      padding: 0.8rem 0.9rem; font-size: 0.87rem;
+      color: var(--ink-soft); border-bottom: 1px solid var(--line);
+      transition: background 0.15s;
+    }
+    .rc-table td:not(:first-child) { text-align: center; }
+    .rc-table tr:hover td { background: var(--cream); }
+    .rc-table tr:last-child td { border-bottom: none; }
+    .rc-table .subject-name { color: var(--ink); font-weight: 400; }
+    .rc-table .th-marks { font-family: var(--serif); font-size: 1rem; color: var(--ink); }
+    .rc-table .pr-marks { font-family: var(--serif); font-size: 1rem; color: var(--ink-muted); }
+
+    /* Grade badge */
+    .grade-badge {
+      display: inline-block; padding: 0.2rem 0.6rem;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+    }
+    .grade-A-plus  { background: #E8F8EE; color: #1A6B35; }
+    .grade-A       { background: #EEF6FF; color: #1A4B8C; }
+    .grade-B-plus  { background: #F0F4FF; color: #3B5BDB; }
+    .grade-B       { background: #F5F0FF; color: #6A3EC7; }
+    .grade-C-plus  { background: #FFF8E8; color: #8B6914; }
+    .grade-C       { background: #FFF3E0; color: #9C5A00; }
+    .grade-D       { background: #FFF0F0; color: #B83232; }
+    .grade-NG      { background: #F5F5F5; color: #888; }
+
+    /* Result summary */
+    .rc-summary {
+      margin: 0 2rem 1.5rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--cream); border: 1px solid var(--line);
+      display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center;
+    }
+    .rc-summary-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .rc-summary-label {
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted);
+    }
+    .rc-summary-val {
+      font-family: var(--serif); font-size: 1.1rem; font-weight: 600; color: var(--ink);
+    }
+    .rc-summary-val.pass { color: #1A6B35; }
+    .rc-summary-val.fail { color: #B83232; }
+
+    /* Result status banner */
+    .rc-status-pass {
+      background: #E8F8EE; border-top: 3px solid #1A6B35;
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .rc-status-fail {
+      background: #FFF0F0; border-top: 3px solid #B83232;
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .rc-status-icon { font-size: 1.3rem; }
+    .rc-status-text { font-size: 0.85rem; color: var(--ink); }
+    .rc-status-text strong { font-weight: 500; }
+
+    /* Footer actions */
+    .rc-actions {
+      padding: 1.2rem 2rem; border-top: 1px solid var(--line);
+      display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;
+    }
+    .rc-print-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.2rem; border: 1px solid var(--line);
+      background: var(--white); color: var(--ink-muted); cursor: pointer;
+      transition: all 0.18s;
+    }
+    .rc-print-btn:hover { border-color: var(--terra); color: var(--terra); }
+    .rc-new-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.2rem; border: 1px solid var(--terra);
+      background: var(--terra); color: var(--white); cursor: pointer;
+      transition: background 0.18s;
+    }
+    .rc-new-btn:hover { background: var(--ink); border-color: var(--ink); }
+    .rc-disclaimer-note {
+      font-size: 0.72rem; color: var(--ink-muted); margin-left: auto;
+      font-style: italic;
+    }
+
+    /* ── HOW TO USE SECTION ── */
+    .how-to {
+      background: var(--white); border: 1px solid var(--line);
+      padding: 2rem; margin-top: 2rem;
+    }
+    .how-to-title {
+      font-family: var(--serif); font-size: 1.15rem; font-weight: 400;
+      color: var(--ink); margin-bottom: 1.2rem;
+    }
+    .how-to-steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .how-step { display: flex; flex-direction: column; gap: 0.4rem; }
+    .how-step-num {
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 600;
+      color: var(--terra); opacity: 0.4; line-height: 1;
+    }
+    .how-step-title {
+      font-size: 0.85rem; font-weight: 500; color: var(--ink);
+    }
+    .how-step-desc {
+      font-size: 0.8rem; color: var(--ink-muted); line-height: 1.6;
+    }
+
+    /* ── OFFICIAL NEB BANNER ── */
+    .official-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      margin-top: 1.2rem; padding: 1.1rem 1.3rem;
+      background: #EEF6FF; border: 1px solid #BDD8FF;
+    }
+    .official-banner-left { flex: 1; min-width: 200px; }
+    .official-banner-title {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.85rem; font-weight: 500; color: #1A4B8C;
+      margin-bottom: 0.3rem;
+    }
+    .official-banner-title svg { color: #1A4B8C; flex-shrink: 0; }
+    .official-banner-sub {
+      font-size: 0.78rem; color: #3B5BDB; line-height: 1.5;
+    }
+    .official-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.6rem 1.2rem; background: #1A4B8C; color: #fff;
+      border: none; cursor: pointer; white-space: nowrap;
+      transition: background 0.2s; flex-shrink: 0;
+    }
+    .official-btn:hover { background: #0D3166; }
+
+    /* Official link inside result card actions */
+    .rc-official-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--sans); font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.2rem; background: #EEF6FF;
+      border: 1px solid #BDD8FF; color: #1A4B8C; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .rc-official-link:hover { background: #1A4B8C; color: #fff; border-color: #1A4B8C; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 640px) {
+      .result-page { padding: 7rem 1.25rem 4rem; }
+      .search-row { grid-template-columns: 1fr 1fr; }
+      .check-btn { grid-column: span 2; justify-content: center; }
+      .official-banner { flex-direction: column; align-items: stretch; }
+      .official-btn { justify-content: center; }
+      .rc-header { flex-direction: column; gap: 1rem; }
+      .rc-header-right { text-align: left; }
+      .rc-gpa { font-size: 2rem; }
+      .rc-meta-item { padding: 0.85rem 1rem; min-width: 100px; }
+      .rc-subjects { padding: 1.2rem 1rem; }
+      .rc-table th, .rc-table td { padding: 0.65rem 0.6rem; font-size: 0.8rem; }
+      .rc-summary { margin: 0 1rem 1.2rem; padding: 1rem; gap: 1rem; }
+      .rc-status-pass, .rc-status-fail { padding: 0.85rem 1rem; }
+      .rc-actions { padding: 1rem; flex-direction: column; align-items: stretch; }
+      .rc-disclaimer-note { margin-left: 0; }
+      .how-to { padding: 1.5rem 1rem; }
+      .how-to-steps { grid-template-columns: 1fr; gap: 1rem; }
+      .exam-toggle { width: 100%; }
+      .exam-btn { flex: 1; text-align: center; }
+    }
+
+    @media print {
+      .nav, .nav-mobile, .nav-overlay, footer,
+      .scroll-top, .search-card, .exam-toggle,
+      .result-loading, .how-to, .result-disclaimer,
+      .rc-actions, .rc-new-btn, .rc-print-btn,
+      .section-label, .section-title { display: none !important; }
+      .result-page { padding: 1rem; }
+      .result-card { display: block !important; border: none; }
+      .rc-header { background: #1A1714 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body class="subpage">
+
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/skills">Skills</a></li>
+      <li><a href="/qualification">Journey</a></li>
+      <li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li>
+      <li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li>
+      <li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li>
+      <li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li>
+      <li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="result-page">
+
+    <div class="section-label">Tools · Students</div>
+    <h1 class="section-title">Result <em>Checker</em></h1>
+
+    <div class="result-disclaimer">
+      ⚠ Demo only — results shown are randomly generated for UI demonstration
+    </div>
+
+    <!-- EXAM TYPE TOGGLE -->
+    <div class="exam-toggle">
+      <button class="exam-btn active" data-exam="SEE">SEE</button>
+      <button class="exam-btn" data-exam="+2 Science">+2 Science</button>
+      <button class="exam-btn" data-exam="+2 Management">+2 Management</button>
+      <button class="exam-btn" data-exam="+2 Humanities">+2 Humanities</button>
+    </div>
+
+    <!-- SEARCH CARD -->
+    <div class="search-card">
+      <div class="search-card-title">Enter your details</div>
+      <div class="search-card-sub" id="searchSubtitle">Enter your SEE symbol number and year to view your result.</div>
+      <div class="search-row">
+        <div class="search-field">
+          <label>Symbol Number</label>
+          <input type="text" id="symbolInput" placeholder="e.g. 2390021" maxlength="10">
+        </div>
+        <div class="search-field">
+          <label>Exam Year</label>
+          <select id="yearSelect">
+            <option value="2081">2081 B.S. (2024/25)</option>
+            <option value="2080">2080 B.S. (2023/24)</option>
+            <option value="2079">2079 B.S. (2022/23)</option>
+            <option value="2078">2078 B.S. (2021/22)</option>
+          </select>
+        </div>
+        <button class="check-btn" id="checkBtn" onclick="checkResult()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Check Demo
+        </button>
+      </div>
+      <div class="search-error" id="searchError"></div>
+
+      <!-- OFFICIAL NEB REDIRECT -->
+      <div class="official-banner">
+        <div class="official-banner-left">
+          <div class="official-banner-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Want your real NEB result?
+          </div>
+          <div class="official-banner-sub">Click below to go to the official NEB result portal with your symbol number pre-filled.</div>
+        </div>
+        <button class="official-btn" id="officialBtn" onclick="goToOfficial()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Go to Official NEB Site
+        </button>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="result-loading" id="resultLoading">
+      <div class="loader"></div>
+      <div class="loading-text">Fetching your result…</div>
+      <div class="loading-steps">
+        <div class="loading-step" id="ls1">Connecting to NEB server…</div>
+        <div class="loading-step" id="ls2">Verifying symbol number…</div>
+        <div class="loading-step" id="ls3">Loading mark sheet…</div>
+      </div>
+    </div>
+
+    <!-- RESULT CARD -->
+    <div class="result-card" id="resultCard">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- HOW TO USE -->
+    <div class="how-to" id="howTo">
+      <div class="how-to-title">How to check your result</div>
+      <div class="how-to-steps">
+        <div class="how-step">
+          <div class="how-step-num">01</div>
+          <div class="how-step-title">Select exam type</div>
+          <div class="how-step-desc">Choose whether you are checking SEE, +2 Science, Management, or Humanities results.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">02</div>
+          <div class="how-step-title">Enter symbol number</div>
+          <div class="how-step-desc">Your symbol number is printed on your admit card. Enter it exactly as shown — numbers only.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-num">03</div>
+          <div class="how-step-title">View your result</div>
+          <div class="how-step-desc">Your complete mark sheet with subject-wise marks, GPA, and division will be displayed instantly.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span></div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal</p>
+  </footer>
+
+  <a href="#" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </a>
+
+  <script src="/script.js"></script>
+  <script>
+  // ── DATA ──────────────────────────────────────────────────
+
+  const EXAM_SUBJECTS = {
+    'SEE': [
+      { code: 'Comp.Eng. 001', name: 'Compulsory English' },
+      { code: 'Comp.Nep. 002', name: 'Compulsory Nepali' },
+      { code: 'Math 003',      name: 'Mathematics' },
+      { code: 'Sci. 004',      name: 'Science & Technology' },
+      { code: 'SS 005',        name: 'Social Studies & Human Values' },
+      { code: 'HPE 006',       name: 'Health, Population & Environment' },
+      { code: 'Opt.Math 007',  name: 'Optional Mathematics' },
+      { code: 'Comp. 008',     name: 'Computer Science' },
+    ],
+    '+2 Science': [
+      { code: 'Eng. 101',      name: 'English' },
+      { code: 'Nep. 102',      name: 'Nepali' },
+      { code: 'Phy. 103',      name: 'Physics' },
+      { code: 'Chem. 104',     name: 'Chemistry' },
+      { code: 'Math 105',      name: 'Mathematics' },
+      { code: 'Bio. 106',      name: 'Biology' },
+      { code: 'Comp. 107',     name: 'Computer Science' },
+    ],
+    '+2 Management': [
+      { code: 'Eng. 201',      name: 'English' },
+      { code: 'Nep. 202',      name: 'Nepali' },
+      { code: 'Acc. 203',      name: 'Account' },
+      { code: 'Eco. 204',      name: 'Economics' },
+      { code: 'BM 205',        name: 'Business Mathematics' },
+      { code: 'BS 206',        name: 'Business Studies' },
+      { code: 'Comp. 207',     name: 'Computer Science' },
+    ],
+    '+2 Humanities': [
+      { code: 'Eng. 301',      name: 'English' },
+      { code: 'Nep. 302',      name: 'Nepali' },
+      { code: 'Soc. 303',      name: 'Sociology' },
+      { code: 'His. 304',      name: 'History' },
+      { code: 'Pol. 305',      name: 'Political Science' },
+      { code: 'Eco. 306',      name: 'Economics' },
+      { code: 'Comp. 307',     name: 'Computer Science' },
+    ],
+  };
+
+  const NEPALI_NAMES = [
+    'Aarav Sharma','Sita Thapa','Binod Adhikari','Priya Poudel','Rajan Gurung',
+    'Sunita Karki','Dipak Bhandari','Anita Rai','Suraj Magar','Manisha Shrestha',
+    'Prakash Bhattarai','Kabita Oli','Rohan Tamang','Sarita Joshi','Bikash Pandey',
+    'Sushma Basnet','Nabin KC','Puja Koirala','Anil Regmi','Deepa Chaudhary',
+  ];
+
+  const DISTRICTS = [
+    'Rupandehi','Palpa','Kapilvastu','Nawalparasi','Arghakhanchi'
+  ];
+
+  const SCHOOLS = [
+    'Canon Secondary School, Butwal',
+    'Milestone English Boarding School, Butwal',
+    'Shree Bhanu Secondary School, Butwal',
+    'Siddhartha Vanasthali Institute, Butwal',
+    'National Academy, Butwal',
+  ];
+
+  // ── STATE ─────────────────────────────────────────────────
+  let activeExam = 'SEE';
+
+  // ── GRADE SYSTEM ─────────────────────────────────────────
+  function getGrade(marks, hasPractical) {
+    // For SEE: out of 100 theory, 25+75 or 100
+    // Grade points
+    if (marks >= 90) return { letter:'A+', point:4.0, css:'A-plus' };
+    if (marks >= 80) return { letter:'A',  point:3.6, css:'A' };
+    if (marks >= 70) return { letter:'B+', point:3.2, css:'B-plus' };
+    if (marks >= 60) return { letter:'B',  point:2.8, css:'B' };
+    if (marks >= 50) return { letter:'C+', point:2.4, css:'C-plus' };
+    if (marks >= 40) return { letter:'C',  point:2.0, css:'C' };
+    if (marks >= 35) return { letter:'D',  point:1.6, css:'D' };
+    return { letter:'NG', point:0.0, css:'NG' };
+  }
+
+  function getDivision(gpa) {
+    if (gpa >= 3.6) return 'Distinction';
+    if (gpa >= 3.2) return 'First Division';
+    if (gpa >= 2.8) return 'Second Division';
+    if (gpa >= 2.0) return 'Third Division';
+    return 'Not Graded';
+  }
+
+  // ── RANDOM RESULT GENERATOR ───────────────────────────────
+  function generateResult(symbol, year, exam) {
+    // Use symbol as seed for consistent results per symbol
+    let seed = 0;
+    for (let i = 0; i < symbol.length; i++) seed += symbol.charCodeAt(i) * (i + 1);
+
+    function seededRand(min, max) {
+      seed = (seed * 9301 + 49297) % 233280;
+      return Math.floor(min + (seed / 233280) * (max - min + 1));
+    }
+
+    const name     = NEPALI_NAMES[seededRand(0, NEPALI_NAMES.length - 1)];
+    const district = DISTRICTS[seededRand(0, DISTRICTS.length - 1)];
+    const school   = SCHOOLS[seededRand(0, SCHOOLS.length - 1)];
+    const dob      = `${seededRand(1, 28)}/${seededRand(1, 12)}/${year - seededRand(16, 18)}`;
+    const subjects = EXAM_SUBJECTS[exam];
+    const hasPractical = exam === '+2 Science';
+
+    let totalGP = 0;
+    let failed = 0;
+
+    const subjectResults = subjects.map(sub => {
+      const thMarks = seededRand(35, 98);
+      const prMarks = hasPractical ? seededRand(15, 25) : null;
+      const totalMarks = hasPractical ? thMarks + prMarks : thMarks;
+      const fullMark   = hasPractical ? 125 : 100;
+      // Percentage relative to full marks
+      const pct = (totalMarks / fullMark) * 100;
+      const grade = getGrade(pct, hasPractical);
+      if (grade.letter === 'NG') failed++;
+      totalGP += grade.point;
+      return { ...sub, thMarks, prMarks, totalMarks, fullMark, grade };
+    });
+
+    const gpa = (totalGP / subjects.length).toFixed(2);
+    const passed = failed === 0;
+    const division = passed ? getDivision(parseFloat(gpa)) : 'Not Graded';
+    const rollNo = `${seededRand(1000, 9999)}`;
+
+    return { name, district, school, dob, symbol, year, exam, rollNo, subjectResults, gpa, division, passed, failed };
+  }
+
+  // ── RENDER RESULT ─────────────────────────────────────────
+  function renderResult(data) {
+    const hasPractical = data.exam === '+2 Science';
+
+    const subjectRows = data.subjectResults.map(s => `
+      <tr>
+        <td><span class="subject-name">${s.name}</span><br><small style="color:var(--ink-muted);font-size:0.7rem">${s.code}</small></td>
+        <td class="th-marks">${s.thMarks}</td>
+        ${hasPractical ? `<td class="pr-marks">${s.prMarks}</td>` : ''}
+        <td class="th-marks">${s.totalMarks}</td>
+        <td>${s.fullMark}</td>
+        <td><span class="grade-badge grade-${s.grade.css}">${s.grade.letter}</span></td>
+        <td>${s.grade.point.toFixed(1)}</td>
+      </tr>`).join('');
+
+    document.getElementById('resultCard').innerHTML = `
+      <div class="rc-header">
+        <div class="rc-header-left">
+          <div class="rc-exam-badge">${data.exam} Examination ${data.year} B.S.</div>
+          <div class="rc-student-name">${data.name}</div>
+          <div class="rc-symbol">Symbol No: ${data.symbol} &nbsp;·&nbsp; Roll No: ${data.rollNo}</div>
+        </div>
+        <div class="rc-header-right">
+          <div class="rc-gpa-label">Final GPA</div>
+          <div class="rc-gpa">${data.gpa}</div>
+          <div class="rc-division">${data.division}</div>
+        </div>
+      </div>
+
+      <div class="rc-meta">
+        <div class="rc-meta-item"><div class="rc-meta-label">Date of Birth</div><div class="rc-meta-value">${data.dob}</div></div>
+        <div class="rc-meta-item"><div class="rc-meta-label">District</div><div class="rc-meta-value">${data.district}</div></div>
+        <div class="rc-meta-item"><div class="rc-meta-label">School / College</div><div class="rc-meta-value" style="font-size:0.82rem">${data.school}</div></div>
+        <div class="rc-meta-item"><div class="rc-meta-label">Exam Type</div><div class="rc-meta-value">${data.exam}</div></div>
+      </div>
+
+      <div class="rc-subjects">
+        <div class="rc-subjects-title">Subject-wise Mark Sheet</div>
+        <table class="rc-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Theory</th>
+              ${hasPractical ? '<th>Practical</th>' : ''}
+              <th>Total</th>
+              <th>Full Marks</th>
+              <th>Grade</th>
+              <th>Grade Point</th>
+            </tr>
+          </thead>
+          <tbody>${subjectRows}</tbody>
+        </table>
+      </div>
+
+      <div class="rc-summary">
+        <div class="rc-summary-item">
+          <span class="rc-summary-label">GPA</span>
+          <span class="rc-summary-val">${data.gpa} / 4.00</span>
+        </div>
+        <div class="rc-summary-item">
+          <span class="rc-summary-label">Division</span>
+          <span class="rc-summary-val ${data.passed ? 'pass' : 'fail'}">${data.division}</span>
+        </div>
+        <div class="rc-summary-item">
+          <span class="rc-summary-label">Subjects Passed</span>
+          <span class="rc-summary-val">${data.subjectResults.length - data.failed} / ${data.subjectResults.length}</span>
+        </div>
+        <div class="rc-summary-item">
+          <span class="rc-summary-label">Status</span>
+          <span class="rc-summary-val ${data.passed ? 'pass' : 'fail'}">${data.passed ? '✓ Passed' : '✗ Not Graded'}</span>
+        </div>
+      </div>
+
+      <div class="${data.passed ? 'rc-status-pass' : 'rc-status-fail'}">
+        <span class="rc-status-icon">${data.passed ? '🎉' : '📋'}</span>
+        <div class="rc-status-text">
+          ${data.passed
+            ? `<strong>Congratulations, ${data.name.split(' ')[0]}!</strong> You have successfully passed the ${data.exam} examination ${data.year} with <strong>${data.division}</strong>.`
+            : `<strong>Result: Not Graded.</strong> ${data.name.split(' ')[0]} has not passed the ${data.exam} examination ${data.year}. ${data.failed} subject(s) received NG grade.`
+          }
+        </div>
+      </div>
+
+      <div class="rc-actions">
+        <button class="rc-print-btn" onclick="window.print()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save PDF
+        </button>
+        <button class="rc-new-btn" onclick="resetChecker()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+          Check Another
+        </button>
+        <button class="rc-official-link" onclick="goToOfficial()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Real Result on NEB
+        </button>
+        <span class="rc-disclaimer-note">⚠ Demo result — not from NEB</span>
+      </div>`;
+  }
+
+  // ── OFFICIAL NEB REDIRECT ─────────────────────────────────
+  // NEB result URLs — opens the official site with symbol pre-filled
+  const NEB_URLS = {
+    'SEE':           'https://see.ntc.net.np',
+    '+2 Science':    'https://neb.ntc.net.np',
+    '+2 Management': 'https://neb.ntc.net.np',
+    '+2 Humanities': 'https://neb.ntc.net.np',
+  };
+
+  window.goToOfficial = function() {
+    const symbol = document.getElementById('symbolInput').value.trim();
+    const baseUrl = NEB_URLS[activeExam] || 'https://see.ntc.net.np';
+    // Open NEB site — symbol pre-filled where URL supports it
+    const url = symbol ? `${baseUrl}?symbol=${symbol}` : baseUrl;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  // ── CHECK RESULT ──────────────────────────────────────────
+  window.checkResult = function() {
+    const symbol = document.getElementById('symbolInput').value.trim();
+    const year   = document.getElementById('yearSelect').value;
+    const errEl  = document.getElementById('searchError');
+
+    // Validate
+    errEl.classList.remove('visible');
+    if (!symbol) {
+      errEl.textContent = 'Please enter your symbol number.';
+      errEl.classList.add('visible');
+      document.getElementById('symbolInput').focus();
+      return;
+    }
+    if (!/^\d{5,10}$/.test(symbol)) {
+      errEl.textContent = 'Symbol number must be 5–10 digits. Numbers only.';
+      errEl.classList.add('visible');
+      return;
+    }
+
+    // Hide previous result and how-to
+    document.getElementById('resultCard').classList.remove('visible');
+    document.getElementById('howTo').style.display = 'none';
+
+    // Show loading
+    const loading = document.getElementById('resultLoading');
+    loading.classList.add('visible');
+    document.getElementById('checkBtn').disabled = true;
+
+    // Animate loading steps
+    const steps = ['ls1','ls2','ls3'];
+    steps.forEach((id, i) => {
+      document.getElementById(id).classList.remove('show');
+      document.getElementById(id).innerHTML = ['Connecting to NEB server…','Verifying symbol number…','Loading mark sheet…'][i];
+    });
+
+    let step = 0;
+    const stepInterval = setInterval(() => {
+      if (step < steps.length) {
+        const el = document.getElementById(steps[step]);
+        el.classList.add('show');
+        el.innerHTML = `<span class="tick">✓</span> ` + el.textContent;
+        step++;
+      } else {
+        clearInterval(stepInterval);
+      }
+    }, 600);
+
+    // Generate and show result after delay
+    setTimeout(() => {
+      loading.classList.remove('visible');
+      document.getElementById('checkBtn').disabled = false;
+
+      const data = generateResult(symbol, year, activeExam);
+      renderResult(data);
+      document.getElementById('resultCard').classList.add('visible');
+
+      // Scroll to result
+      document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2200);
+  };
+
+  // ── RESET ─────────────────────────────────────────────────
+  window.resetChecker = function() {
+    document.getElementById('resultCard').classList.remove('visible');
+    document.getElementById('symbolInput').value = '';
+    document.getElementById('howTo').style.display = '';
+    document.getElementById('searchError').classList.remove('visible');
+    document.querySelector('.search-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ── EXAM TYPE TOGGLE ──────────────────────────────────────
+  document.querySelectorAll('.exam-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.exam-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeExam = btn.dataset.exam;
+      const subtitles = {
+        'SEE':           'Enter your SEE symbol number and year to view your result.',
+        '+2 Science':    'Enter your +2 Science symbol number and year to view your result.',
+        '+2 Management': 'Enter your +2 Management symbol number and year to view your result.',
+        '+2 Humanities': 'Enter your +2 Humanities symbol number and year to view your result.',
+      };
+      document.getElementById('searchSubtitle').textContent = subtitles[activeExam];
+      // Reset
+      document.getElementById('resultCard').classList.remove('visible');
+      document.getElementById('resultLoading').classList.remove('visible');
+      document.getElementById('howTo').style.display = '';
+      document.getElementById('searchError').classList.remove('visible');
+    });
+  });
+
+  // Enter key triggers check
+  document.getElementById('symbolInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkResult();
+  });
+  </script>
+</body>
+</html>

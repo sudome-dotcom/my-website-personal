@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions </title>
+    <meta name="description" content="I build responsive websites and provide digital solutions for businesses and students in Nepal.">
+    <link rel="canonical" href="https://shishirbhattarai.com.np/terms.html">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../style.css">
+  <style>
+    .legal-hero { padding: 8rem clamp(1.25rem,5vw,4rem) 3rem; max-width: 1100px; margin: 0 auto; }
+    .legal-meta { font-size: 0.78rem; color: var(--ink-muted); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .legal-meta-badge { background: var(--terra-pale); color: var(--terra); padding: 0.18rem 0.6rem; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; }
+    .legal-layout { display: grid; grid-template-columns: 200px 1fr; gap: 0; max-width: 1100px; margin: 0 auto; padding: 0 clamp(1.25rem,5vw,4rem) 6rem; align-items: start; }
+    .legal-toc { position: sticky; top: 90px; padding-right: 2rem; }
+    .legal-toc-heading { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); font-weight: 500; margin-bottom: 0.75rem; padding-left: 0.2rem; }
+    .toc-link { display: block; padding: 0.4rem 0.7rem; font-size: 0.8rem; color: var(--ink-muted); text-decoration: none; transition: all 0.18s; border-left: 2px solid transparent; margin-bottom: 0.05rem; }
+    .toc-link:hover { color: var(--terra); background: var(--terra-pale); }
+    .toc-link.active { color: var(--terra); background: var(--terra-pale); border-left-color: var(--terra); font-weight: 500; }
+    .legal-content { min-width: 0; }
+    .legal-section { background: var(--white); border: 1px solid var(--line); padding: 2rem 2.2rem; margin-bottom: 1rem; scroll-margin-top: 90px; transition: border-color 0.2s; }
+    .legal-section:hover { border-color: var(--terra-pale); }
+    .legal-section-num { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--terra); font-weight: 500; opacity: 0.7; margin-bottom: 0.35rem; }
+    .legal-section h2 { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; color: var(--ink); margin-bottom: 1rem; line-height: 1.25; }
+    .legal-section p { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 0.85rem; line-height: 1.85; }
+    .legal-section p:last-child { margin-bottom: 0; }
+    .legal-section ul, .legal-section ol { padding-left: 1.2rem; margin-bottom: 0.85rem; }
+    .legal-section li { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 0.4rem; line-height: 1.75; }
+    .legal-section a { color: var(--terra); text-decoration: none; border-bottom: 1px solid var(--terra-pale); }
+    .legal-section a:hover { border-bottom-color: var(--terra); }
+    .highlight-box { background: var(--terra-pale); border-left: 2px solid var(--terra); padding: 1rem 1.2rem; margin: 1rem 0; }
+    .highlight-box p { margin: 0; font-size: 0.88rem; }
+    .warning-box { background: #FFF8F5; border-left: 2px solid var(--terra-soft); padding: 1rem 1.2rem; margin: 1rem 0; }
+    .warning-box p { margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
+    @media(max-width: 720px) {
+      .legal-layout { grid-template-columns: 1fr; padding: 0 1.25rem 4rem; }
+      .legal-toc { position: static; padding-right: 0; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0.4rem; margin-bottom: 1.5rem; padding-bottom: 4px; scrollbar-width: none; }
+      .legal-toc::-webkit-scrollbar { display: none; }
+      .legal-toc-heading { display: none; }
+      .toc-link { padding: 0.3rem 0.8rem; border: 1px solid var(--line); border-left: 1px solid var(--line); white-space: nowrap; flex-shrink: 0; font-size: 0.76rem; }
+      .toc-link.active { border-color: var(--terra); }
+      .legal-hero { padding: 7rem 1.25rem 2rem; }
+      .legal-section { padding: 1.3rem 1.1rem; }
+      .legal-section h2 { font-size: 1.2rem; }
+      .legal-section p, .legal-section li { font-size: 0.86rem; }
+    }
+    @media(max-width: 480px) { .legal-section h2 { font-size: 1.1rem; } }
+  </style>
+</head>
+<body class="subpage">
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/skills">Skills</a></li>
+      <li><a href="/qualification">Journey</a></li><li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li><li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li><li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li><li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li><li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li><li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li><li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="legal-hero">
+    <div class="section-label">Legal</div>
+    <h2 class="section-title">Terms &amp; <em>Conditions</em></h2>
+    <div class="legal-meta"><span class="legal-meta-badge">Last updated: June 2025</span>shishirbhattarai.com.np</div>
+  </div>
+
+  <div class="legal-layout">
+    <aside class="legal-toc" id="legalToc">
+      <div class="legal-toc-heading">Contents</div>
+      <a href="#agreement" class="toc-link active">Agreement</a>
+      <a href="#use" class="toc-link">Use of Website</a>
+      <a href="#ip" class="toc-link">Intellectual Property</a>
+      <a href="#content" class="toc-link">User Content</a>
+      <a href="#disclaimer" class="toc-link">Disclaimer</a>
+      <a href="#liability" class="toc-link">Liability</a>
+      <a href="#tools-sec" class="toc-link">Teaching Tools</a>
+      <a href="#ads" class="toc-link">Advertising</a>
+      <a href="#links" class="toc-link">External Links</a>
+      <a href="#governing" class="toc-link">Governing Law</a>
+      <a href="#changes" class="toc-link">Changes</a>
+      <a href="#contact-tc" class="toc-link">Contact</a>
+    </aside>
+    <main class="legal-content">
+      <div class="legal-section" id="agreement">
+        <div class="legal-section-num">01</div><h2>Agreement to Terms</h2>
+        <div class="highlight-box"><p>By accessing and using <strong>shishirbhattarai.com.np</strong>, you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use this website.</p></div>
+        <p>These Terms apply to all visitors, users, and anyone who accesses or uses the services offered on this website. The website is operated by <strong>Shishir Bhattarai</strong>, an educator and web developer based in Butwal, Nepal. We reserve the right to change these Terms at any time.</p>
+      </div>
+      <div class="legal-section" id="use">
+        <div class="legal-section-num">02</div><h2>Use of the Website</h2>
+        <p>You agree to use this website only for lawful purposes. You must not:</p>
+        <ul>
+          <li>Use the website in any way that is unlawful, fraudulent, or harmful</li>
+          <li>Use the website to transmit unsolicited advertising or promotional material (spam)</li>
+          <li>Attempt to gain unauthorised access to the server, database, or any connected systems</li>
+          <li>Reproduce, duplicate, or copy any material for commercial purposes without permission</li>
+          <li>Use automated tools (bots, scrapers) to access or download content in bulk</li>
+          <li>Impersonate any person or misrepresent your affiliation with any organisation</li>
+        </ul>
+      </div>
+      <div class="legal-section" id="ip">
+        <div class="legal-section-num">03</div><h2>Intellectual Property</h2>
+        <p>All content on this website — including text, graphics, logos, images, handwritten notes, code, and the overall design — is the intellectual property of Shishir Bhattarai unless otherwise stated.</p>
+        <p>You <strong>may</strong>: view and download content for personal, non-commercial use; share links to pages on this website; download handwritten notes for personal study.</p>
+        <p>You <strong>may not</strong>: reproduce or redistribute content for commercial purposes; claim any content as your own; sell or sublicense any content from this website.</p>
+      </div>
+      <div class="legal-section" id="content">
+        <div class="legal-section-num">04</div><h2>User-Submitted Content</h2>
+        <p>When you submit information through forms on this website, you represent that the information you provide is accurate and complete, you have the right to submit it, and your submission does not violate the rights of any third party.</p>
+        <p>We do not publicly display user-submitted content. The student information tool generates a local document on your device — no data is stored on our servers from that tool.</p>
+      </div>
+      <div class="legal-section" id="disclaimer">
+        <div class="legal-section-num">05</div><h2>Disclaimer of Warranties</h2>
+        <div class="warning-box"><p>This website and its content are provided on an "as is" and "as available" basis without any warranties of any kind, either express or implied.</p></div>
+        <p>We do not warrant that the website will be available at all times, that the content is accurate or up to date, or that the server is free of viruses or other harmful components. Educational content on this website is intended for general study purposes only and is not a substitute for formal education.</p>
+      </div>
+      <div class="legal-section" id="liability">
+        <div class="legal-section-num">06</div><h2>Limitation of Liability</h2>
+        <p>To the fullest extent permitted by applicable law, Shishir Bhattarai shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of this website, including loss of data or profits, errors or omissions in content, or interruption of service.</p>
+      </div>
+      <div class="legal-section" id="tools-sec">
+        <div class="legal-section-num">07</div><h2>Teaching Tools &amp; Notes</h2>
+        <p>The Teaching Tools section — including handwritten notes, student forms, and other educational resources — is provided free of charge for educational purposes.</p>
+        <ul>
+          <li>Notes and resources are for personal, non-commercial study use only</li>
+          <li>We do not guarantee that all notes are error-free or complete</li>
+          <li>We reserve the right to modify or remove any tool or resource at any time without prior notice</li>
+        </ul>
+      </div>
+      <div class="legal-section" id="ads">
+        <div class="legal-section-num">08</div><h2>Advertising</h2>
+        <p>This website may display advertisements served by Google AdSense and other third-party ad networks. These help support the free content and tools provided here. Advertisements are not endorsements by Shishir Bhattarai.</p>
+        <p>You agree not to click on advertisements artificially or fraudulently. Any artificial inflation of ad clicks is a violation of Google AdSense policies and these Terms.</p>
+      </div>
+      <div class="legal-section" id="links">
+        <div class="legal-section-num">09</div><h2>External Links</h2>
+        <p>This website contains links to third-party websites including portfolio projects, social media profiles, and external resources. These links are provided for your convenience only. We have no control over the content of third-party websites and accept no responsibility for them.</p>
+      </div>
+      <div class="legal-section" id="governing">
+        <div class="legal-section-num">10</div><h2>Governing Law</h2>
+        <p>These Terms and Conditions shall be governed by and construed in accordance with the laws of <strong>Nepal</strong>. Any disputes arising from the use of this website shall be subject to the exclusive jurisdiction of the courts of Nepal.</p>
+      </div>
+      <div class="legal-section" id="changes">
+        <div class="legal-section-num">11</div><h2>Changes to Terms</h2>
+        <p>We reserve the right to revise these Terms at any time. When we do, we will update the "Last updated" date at the top of this page. Your continued use of the website following the posting of changes constitutes your acceptance of those changes.</p>
+      </div>
+      <div class="legal-section" id="contact-tc">
+        <div class="legal-section-num">12</div><h2>Contact</h2>
+        <ul>
+          <li><strong>Name:</strong> Shishir Bhattarai</li>
+          <li><strong>Email:</strong> <a href="mailto:shishirbhattarai2002@gmail.com">shishirbhattarai2002@gmail.com</a></li>
+          <li><strong>Phone / WhatsApp:</strong> +977 9867537564</li>
+          <li><strong>Location:</strong> Butwal, Rupandehi, Nepal</li>
+          <li><strong>Website:</strong> <a href="https://shishirbhattarai.com.np" target="_blank">shishirbhattarai.com.np</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span>
+              <div style=" color:#7A6F68; font-family: var(--sans); font-size: 0.83rem;">Serving clients across Nepal, including Butwal.</div>
+</div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal</p>
+  </footer>
+  <a href="#" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </a>
+  <script src="/script.js"></script>
+  <script>
+    const sections = document.querySelectorAll('.legal-section[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector('.toc-link[href="#'+entry.target.id+'"]');
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

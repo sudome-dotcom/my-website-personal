@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEE Practice Quiz — Science, Math, English, Computer | Shishir Bhattarai</title>
+  <meta name="description" content="Free SEE practice quiz for Class 9 & 10 students in Nepal. 200+ questions covering Science, Mathematics, English, Computer, Social Studies and more. Test yourself and improve your result.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+  /* ── PAGE ── */
+  .quiz-page { padding: 8rem clamp(1.25rem,5vw,4rem) 5rem; max-width: 860px; margin: 0 auto; }
+
+  /* ── SUBJECT PICKER ── */
+  .subject-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .subject-card {
+    background: var(--white); border: 1px solid var(--line);
+    padding: 1.5rem 1rem; text-align: center; cursor: pointer;
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .subject-card:hover { border-color: var(--terra); transform: translateY(-3px); }
+  .subject-card.selected { border-color: var(--terra); background: var(--terra-pale); }
+  .subject-card.selected::after {
+    content: '✓'; position: absolute; top: 0.4rem; right: 0.6rem;
+    font-size: 0.75rem; color: var(--terra); font-weight: 600;
+  }
+  .subject-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .subject-name { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.25rem; }
+  .subject-count { font-size: 0.72rem; color: var(--ink-muted); }
+
+  /* Quiz config row */
+  .quiz-config {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 2rem;
+  }
+  .config-field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .config-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
+  .config-select {
+    font-family: var(--sans); font-size: 0.85rem; color: var(--ink);
+    border: 1px solid var(--line); background: var(--white);
+    padding: 0.6rem 0.9rem; outline: none; cursor: pointer;
+    -webkit-appearance: none; border-radius: 0;
+    transition: border-color 0.2s; min-width: 140px;
+  }
+  .config-select:focus { border-color: var(--terra); }
+
+  .start-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--terra); color: #fff;
+    font-family: var(--sans); font-size: 0.82rem; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.75rem 2rem; border: none; cursor: pointer;
+    transition: background 0.2s; align-self: flex-end;
+  }
+  .start-btn:hover { background: var(--ink); }
+  .start-btn:disabled { opacity: 0.45; cursor: not-allowed; background: var(--terra); }
+
+  /* ── QUIZ ARENA ── */
+  #quizArena { display: none; }
+
+  /* Progress bar */
+  .quiz-progress-wrap {
+    background: var(--white); border: 1px solid var(--line);
+    padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+  }
+  .progress-bar-track {
+    flex: 1; height: 6px; background: var(--cream); border: 1px solid var(--line); min-width: 120px;
+  }
+  .progress-bar-fill { height: 100%; background: var(--terra); transition: width 0.4s ease; }
+  .progress-text { font-size: 0.78rem; color: var(--ink-muted); white-space: nowrap; }
+  .progress-score { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--terra); white-space: nowrap; }
+
+  /* Timer */
+  .quiz-timer {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: var(--serif); font-size: 1.1rem; font-weight: 600; color: var(--ink);
+  }
+  .quiz-timer.warning { color: #C0392B; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* Subject badge */
+  .q-subject-badge {
+    display: inline-block; font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.18rem 0.6rem; background: var(--terra-pale); color: var(--terra);
+    margin-bottom: 0.85rem;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--white); border: 1px solid var(--line);
+    padding: 2rem; margin-bottom: 1.25rem;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+  .q-number { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.5rem; }
+  .q-text {
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 400;
+    color: var(--ink); line-height: 1.45; margin-bottom: 1.5rem;
+  }
+
+  /* Options */
+  .options-grid { display: flex; flex-direction: column; gap: 0.65rem; }
+  .option-btn {
+    display: flex; align-items: center; gap: 0.85rem;
+    background: var(--cream); border: 1px solid var(--line);
+    padding: 0.85rem 1.1rem; cursor: pointer; text-align: left;
+    transition: all 0.18s; font-family: var(--sans); font-size: 0.9rem;
+    color: var(--ink); width: 100%;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--terra); background: var(--terra-pale); }
+  .option-btn:disabled { cursor: default; }
+  .option-letter {
+    width: 28px; height: 28px; border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 600; color: var(--ink-muted);
+    flex-shrink: 0; background: var(--white); transition: all 0.18s;
+  }
+  .option-btn.correct { background: #E8F8EE; border-color: #2d6a2d; }
+  .option-btn.correct .option-letter { background: #2d6a2d; color: #fff; border-color: #2d6a2d; }
+  .option-btn.wrong { background: #FFF0F0; border-color: #C0392B; }
+  .option-btn.wrong .option-letter { background: #C0392B; color: #fff; border-color: #C0392B; }
+  .option-btn.reveal-correct { background: #E8F8EE; border-color: #2d6a2d; opacity: 0.75; }
+  .option-btn.reveal-correct .option-letter { background: #2d6a2d; color: #fff; border-color: #2d6a2d; }
+
+  /* Explanation */
+  .explanation {
+    display: none; margin-top: 1rem; padding: 0.9rem 1.1rem;
+    background: var(--terra-pale); border-left: 3px solid var(--terra);
+    font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65;
+  }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--terra); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+
+  /* Nav buttons */
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 1rem; flex-wrap: wrap;
+  }
+  .nav-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.65rem 1.4rem; border: none; cursor: pointer; transition: all 0.18s;
+  }
+  .nav-btn.primary { background: var(--terra); color: #fff; }
+  .nav-btn.primary:hover { background: var(--ink); }
+  .nav-btn.secondary { background: none; color: var(--ink-muted); border: 1px solid var(--line); }
+  .nav-btn.secondary:hover { border-color: var(--terra); color: var(--terra); }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .skip-btn { font-size: 0.72rem; color: var(--ink-muted); background: none; border: none; cursor: pointer; transition: color 0.18s; font-family: var(--sans); }
+  .skip-btn:hover { color: var(--terra); }
+
+  /* ── RESULTS SCREEN ── */
+  #resultsScreen { display: none; }
+  .results-hero {
+    background: var(--ink); padding: 2.5rem; text-align: center; margin-bottom: 1.5rem;
+  }
+  .results-score-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,240,232,0.45); margin-bottom: 0.5rem; }
+  .results-score { font-family: var(--serif); font-size: 4.5rem; font-weight: 600; color: var(--terra-soft); line-height: 1; }
+  .results-total { font-size: 0.85rem; color: rgba(245,240,232,0.4); margin: 0.25rem 0 0.75rem; }
+  .results-grade { font-family: var(--serif); font-size: 1.4rem; color: var(--cream); margin-bottom: 0.25rem; }
+  .results-msg { font-size: 0.82rem; color: rgba(245,240,232,0.5); max-width: 360px; margin: 0 auto; line-height: 1.6; }
+
+  .results-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    background: var(--white); border: 1px solid var(--line); margin-bottom: 1.5rem;
+  }
+  .result-stat { padding: 1.2rem; text-align: center; border-right: 1px solid var(--line); }
+  .result-stat:last-child { border-right: none; }
+  .result-stat-num { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; color: var(--terra); line-height: 1; }
+  .result-stat-lbl { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); margin-top: 3px; }
+
+  /* Subject breakdown */
+  .subject-breakdown { background: var(--white); border: 1px solid var(--line); margin-bottom: 1.5rem; }
+  .breakdown-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--line); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+  .breakdown-row {
+    display: grid; grid-template-columns: 1fr auto auto auto; gap: 1rem;
+    padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--line); align-items: center;
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .bd-subject { font-size: 0.87rem; color: var(--ink); }
+  .bd-score { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--terra); }
+  .bd-bar-wrap { width: 80px; }
+  .bd-bar-track { height: 5px; background: var(--cream); border: 1px solid var(--line); }
+  .bd-bar-fill { height: 100%; background: var(--terra); }
+  .bd-pct { font-size: 0.75rem; color: var(--ink-muted); width: 40px; text-align: right; }
+
+  /* Review section */
+  .review-section { margin-top: 2rem; }
+  .review-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 1.2rem; }
+  .review-item {
+    background: var(--white); border: 1px solid var(--line); padding: 1.4rem 1.5rem; margin-bottom: 0.85rem;
+    border-left: 3px solid var(--line);
+  }
+  .review-item.correct-q { border-left-color: #2d6a2d; }
+  .review-item.wrong-q   { border-left-color: #C0392B; }
+  .review-item.skipped-q { border-left-color: var(--ink-muted); }
+  .review-q-meta { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+  .review-status { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.5rem; }
+  .st-correct { background: #E8F8EE; color: #1A6B35; }
+  .st-wrong   { background: #FFF0F0; color: #B83232; }
+  .st-skipped { background: var(--cream); color: var(--ink-muted); }
+  .review-q-text { font-size: 0.88rem; color: var(--ink); margin-bottom: 0.4rem; line-height: 1.45; }
+  .review-answers { font-size: 0.8rem; color: var(--ink-muted); }
+  .review-answers span { color: #1A6B35; font-weight: 500; }
+  .review-answers del  { color: #C0392B; }
+
+  /* Result action buttons */
+  .results-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px) {
+    .quiz-page { padding: 7rem 1.25rem 4rem; }
+    .subject-grid { grid-template-columns: repeat(2, 1fr); }
+    .quiz-config { flex-direction: column; align-items: stretch; }
+    .start-btn { justify-content: center; }
+    .q-text { font-size: 1.05rem; }
+    .question-card { padding: 1.3rem 1.1rem; }
+    .quiz-progress-wrap { padding: 0.85rem 1rem; }
+    .results-stats { grid-template-columns: repeat(2, 1fr); }
+    .result-stat:nth-child(2) { border-right: none; }
+    .result-stat:nth-child(3) { border-right: 1px solid var(--line); border-top: 1px solid var(--line); }
+    .result-stat:nth-child(4) { border-top: 1px solid var(--line); }
+    .breakdown-row { grid-template-columns: 1fr auto; }
+    .bd-bar-wrap, .bd-pct { display: none; }
+    .results-hero { padding: 1.75rem 1rem; }
+    .results-score { font-size: 3.5rem; }
+  }
+  @media(max-width:400px) {
+    .subject-grid { grid-template-columns: 1fr 1fr; }
+    .option-btn { font-size: 0.84rem; padding: 0.75rem 0.85rem; }
+  }
+  </style>
+</head>
+<body class="subpage">
+
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/skills">Skills</a></li>
+      <li><a href="/qualification">Journey</a></li>
+      <li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li>
+      <li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li>
+      <li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li>
+      <li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li>
+      <li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="quiz-page">
+
+    <!-- ═══ HOME SCREEN ═══ -->
+    <div id="homeScreen">
+      <div class="section-label">Tools · Students</div>
+      <h1 class="section-title">SEE Practice <em>Quiz</em></h1>
+      <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:2rem;max-width:500px;line-height:1.75">
+        Test yourself with 250+ questions across 6 subjects. Choose your subjects, set the number of questions, and get a full result with review at the end.
+      </p>
+
+      <div style="font-size:0.68rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.85rem">Select Subjects (choose one or more)</div>
+      <div class="subject-grid" id="subjectPicker">
+        <div class="subject-card" data-subject="science">
+          <div class="subject-icon">🔬</div>
+          <div class="subject-name">Science</div>
+          <div class="subject-count">45 questions</div>
+        </div>
+        <div class="subject-card" data-subject="math">
+          <div class="subject-icon">📐</div>
+          <div class="subject-name">Mathematics</div>
+          <div class="subject-count">45 questions</div>
+        </div>
+        <div class="subject-card" data-subject="english">
+          <div class="subject-icon">📖</div>
+          <div class="subject-name">English</div>
+          <div class="subject-count">40 questions</div>
+        </div>
+        <div class="subject-card" data-subject="computer">
+          <div class="subject-icon">💻</div>
+          <div class="subject-name">Computer</div>
+          <div class="subject-count">45 questions</div>
+        </div>
+        <div class="subject-card" data-subject="social">
+          <div class="subject-icon">🌏</div>
+          <div class="subject-name">Social Studies</div>
+          <div class="subject-count">40 questions</div>
+        </div>
+        <div class="subject-card" data-subject="nepali">
+          <div class="subject-icon">📜</div>
+          <div class="subject-name">Nepali</div>
+          <div class="subject-count">35 questions</div>
+        </div>
+      </div>
+
+      <div class="quiz-config">
+        <div class="config-field">
+          <div class="config-label">Number of Questions</div>
+          <select class="config-select" id="qCount">
+            <option value="10">10 Questions</option>
+            <option value="20" selected>20 Questions</option>
+            <option value="30">30 Questions</option>
+            <option value="50">50 Questions</option>
+            <option value="all">All Questions</option>
+          </select>
+        </div>
+        <div class="config-field">
+          <div class="config-label">Timer per Question</div>
+          <select class="config-select" id="timerSetting">
+            <option value="0">No Timer</option>
+            <option value="30" selected>30 Seconds</option>
+            <option value="45">45 Seconds</option>
+            <option value="60">60 Seconds</option>
+          </select>
+        </div>
+        <div class="config-field">
+          <div class="config-label">Difficulty</div>
+          <select class="config-select" id="difficulty">
+            <option value="all" selected>Mixed</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <button class="start-btn" id="startBtn" onclick="startQuiz()" disabled>
+          Start Quiz
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ QUIZ ARENA ═══ -->
+    <div id="quizArena">
+      <div class="quiz-progress-wrap">
+        <div class="progress-bar-track" style="min-width:80px">
+          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">Question 1 of 20</div>
+        <div class="progress-score" id="liveScore">Score: 0</div>
+        <div class="quiz-timer" id="timerDisplay" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="timerVal">30</span>s
+        </div>
+        <button class="nav-btn secondary" style="margin-left:auto;font-size:0.7rem;padding:0.4rem 0.8rem" onclick="confirmQuit()">Quit</button>
+      </div>
+
+      <span class="q-subject-badge" id="qSubjectBadge">Science</span>
+      <div class="question-card" id="questionCard">
+        <div class="q-number" id="qNumber">Question 1</div>
+        <div class="q-text" id="qText"></div>
+        <div class="options-grid" id="optionsGrid"></div>
+        <div class="explanation" id="explanation"><strong>Explanation</strong><span id="explanationText"></span></div>
+      </div>
+
+      <div class="quiz-nav">
+        <button class="skip-btn" id="skipBtn" onclick="skipQuestion()">Skip this question →</button>
+        <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()" disabled>
+          Next
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ RESULTS SCREEN ═══ -->
+    <div id="resultsScreen">
+      <div class="results-hero">
+        <div class="results-score-label">Your Score</div>
+        <div class="results-score" id="rScore">—</div>
+        <div class="results-total" id="rTotal">out of 20</div>
+        <div class="results-grade" id="rGrade">—</div>
+        <div class="results-msg" id="rMsg">—</div>
+      </div>
+
+      <div class="results-stats">
+        <div class="result-stat"><div class="result-stat-num" id="rCorrect">0</div><div class="result-stat-lbl">Correct</div></div>
+        <div class="result-stat"><div class="result-stat-num" id="rWrong">0</div><div class="result-stat-lbl">Wrong</div></div>
+        <div class="result-stat"><div class="result-stat-num" id="rSkipped">0</div><div class="result-stat-lbl">Skipped</div></div>
+        <div class="result-stat"><div class="result-stat-num" id="rPct">0%</div><div class="result-stat-lbl">Accuracy</div></div>
+      </div>
+
+      <div class="subject-breakdown" id="subjectBreakdown"></div>
+
+      <div class="results-actions">
+        <button class="nav-btn primary" onclick="retakeQuiz()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+          Retake Quiz
+        </button>
+        <button class="nav-btn secondary" onclick="goHome()">
+          Change Subjects
+        </button>
+      </div>
+
+      <div class="review-section">
+        <div class="review-title">Question Review</div>
+        <div id="reviewList"></div>
+      </div>
+    </div>
+
+  </div><!-- end quiz-page -->
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span></div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal</p>
+  </footer>
+  <a href="#" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </a>
+
+  <script src="/script.js"></script>
+  <script>
+  // ═══════════════════════════════════════════════════════════════
+  //  QUESTION BANK  (250+ questions across 6 subjects)
+  // ═══════════════════════════════════════════════════════════════
+  const QB = {
+
+    science: [
+      // PHYSICS
+      {q:"What is the SI unit of force?", o:["Newton","Joule","Watt","Pascal"], a:0, d:"easy", exp:"The SI unit of force is Newton (N), named after Sir Isaac Newton. Force = mass × acceleration (F = ma)."},
+      {q:"Which law states that every action has an equal and opposite reaction?", o:["Newton's First Law","Newton's Second Law","Newton's Third Law","Law of Gravitation"], a:2, d:"easy", exp:"Newton's Third Law of Motion states that for every action there is an equal and opposite reaction."},
+      {q:"What is the speed of light in vacuum?", o:["3 × 10⁸ m/s","3 × 10⁶ m/s","3 × 10¹⁰ m/s","3 × 10⁴ m/s"], a:0, d:"easy", exp:"The speed of light in vacuum is approximately 3 × 10⁸ metres per second (300,000 km/s)."},
+      {q:"Which type of mirror is used in vehicle rear-view mirrors?", o:["Plane mirror","Concave mirror","Convex mirror","Parabolic mirror"], a:2, d:"easy", exp:"Convex mirrors are used as rear-view mirrors because they give a wider field of view and always form an erect, diminished image."},
+      {q:"What is the formula for kinetic energy?", o:["KE = mgh","KE = ½mv²","KE = mv","KE = F×d"], a:1, d:"medium", exp:"Kinetic energy = ½ × mass × velocity² (KE = ½mv²). It is the energy an object possesses due to its motion."},
+      {q:"The unit of electric resistance is:", o:["Ampere","Volt","Ohm","Watt"], a:2, d:"easy", exp:"The SI unit of electric resistance is Ohm (Ω), named after Georg Simon Ohm who formulated Ohm's Law."},
+      {q:"Which device converts electrical energy into sound energy?", o:["Microphone","Loudspeaker","Generator","Transformer"], a:1, d:"easy", exp:"A loudspeaker converts electrical energy into sound energy using electromagnetic induction."},
+      {q:"According to Ohm's Law, V = ?", o:["I/R","IR","I+R","I-R"], a:1, d:"easy", exp:"Ohm's Law: Voltage (V) = Current (I) × Resistance (R). The current through a conductor is directly proportional to the voltage across it."},
+      {q:"What is the SI unit of power?", o:["Joule","Newton","Watt","Pascal"], a:2, d:"easy", exp:"The SI unit of power is Watt (W). Power = Work done / Time taken. 1 Watt = 1 Joule per second."},
+      {q:"Which type of lens is used to correct short-sightedness (myopia)?", o:["Convex lens","Concave lens","Bifocal lens","Cylindrical lens"], a:1, d:"medium", exp:"Concave (diverging) lens is used to correct myopia. It diverges light rays before they reach the eye's lens, shifting the focal point onto the retina."},
+      {q:"What is the acceleration due to gravity on Earth's surface?", o:["9.8 m/s²","8.9 m/s²","10.8 m/s²","6.7 m/s²"], a:0, d:"easy", exp:"The standard acceleration due to gravity on Earth's surface is approximately 9.8 m/s² (often approximated as 10 m/s² in problems)."},
+      {q:"Which phenomenon explains the blue colour of the sky?", o:["Reflection","Refraction","Scattering","Diffraction"], a:2, d:"medium", exp:"The blue colour of the sky is due to Rayleigh scattering. Blue light has a shorter wavelength and is scattered more than red light by atmospheric particles."},
+      // CHEMISTRY
+      {q:"What is the chemical formula of water?", o:["H₂O","CO₂","NaCl","H₂O₂"], a:0, d:"easy", exp:"Water has the chemical formula H₂O — two hydrogen atoms bonded to one oxygen atom through covalent bonds."},
+      {q:"Which gas is produced when an acid reacts with a metal?", o:["Oxygen","Carbon dioxide","Hydrogen","Nitrogen"], a:2, d:"easy", exp:"When an acid reacts with a metal, hydrogen gas is produced. Example: Zn + H₂SO₄ → ZnSO₄ + H₂↑"},
+      {q:"The pH of pure water is:", o:["0","7","14","1"], a:1, d:"easy", exp:"Pure water has a pH of 7, which is neutral. pH below 7 is acidic, above 7 is basic/alkaline."},
+      {q:"Which gas is commonly called 'laughing gas'?", o:["NO","NO₂","N₂O","N₂"], a:2, d:"medium", exp:"Nitrous oxide (N₂O) is commonly called laughing gas because it can cause euphoria and laughter when inhaled in small amounts."},
+      {q:"What is the atomic number of Carbon?", o:["4","6","8","12"], a:1, d:"easy", exp:"Carbon has an atomic number of 6, meaning it has 6 protons in its nucleus. Its atomic mass is approximately 12."},
+      {q:"Which acid is present in vinegar?", o:["Hydrochloric acid","Acetic acid","Sulphuric acid","Citric acid"], a:1, d:"easy", exp:"Vinegar contains acetic acid (CH₃COOH), typically at 4–8% concentration. It gives vinegar its sour taste."},
+      {q:"Baking soda is chemically known as:", o:["Sodium chloride","Sodium carbonate","Sodium bicarbonate","Sodium hydroxide"], a:2, d:"medium", exp:"Baking soda is sodium bicarbonate (NaHCO₃). When heated or mixed with acid, it releases CO₂, which makes baked goods rise."},
+      // BIOLOGY
+      {q:"What is the powerhouse of the cell?", o:["Nucleus","Ribosome","Mitochondria","Chloroplast"], a:2, d:"easy", exp:"Mitochondria are called the powerhouse of the cell because they produce ATP (energy) through cellular respiration."},
+      {q:"Which part of the plant performs photosynthesis?", o:["Root","Stem","Leaf","Flower"], a:2, d:"easy", exp:"Leaves are the primary site of photosynthesis. They contain chlorophyll in chloroplasts which absorbs sunlight to convert CO₂ and water into glucose."},
+      {q:"What is the full form of DNA?", o:["Deoxyribose Nucleic Acid","Di-Nitrogen Acid","Deoxyribonucleic Acid","Di-Nucleic Acid"], a:2, d:"easy", exp:"DNA stands for Deoxyribonucleic Acid. It carries the genetic information used in the growth, development, functioning, and reproduction of all living organisms."},
+      {q:"Which blood group is called the universal donor?", o:["A","B","AB","O"], a:3, d:"medium", exp:"Blood group O (specifically O-negative) is called the universal donor because its red blood cells can be given to people of any blood group in emergencies."},
+      {q:"How many chambers does the human heart have?", o:["2","3","4","5"], a:2, d:"easy", exp:"The human heart has 4 chambers: two upper chambers called atria (left and right atrium) and two lower chambers called ventricles (left and right ventricle)."},
+      {q:"Which vitamin is produced when skin is exposed to sunlight?", o:["Vitamin A","Vitamin B","Vitamin C","Vitamin D"], a:3, d:"easy", exp:"Vitamin D is synthesised in the skin when it is exposed to ultraviolet B (UVB) radiation from sunlight. It is essential for calcium absorption and bone health."},
+      {q:"The largest organ of the human body is:", o:["Liver","Lung","Skin","Brain"], a:2, d:"easy", exp:"The skin is the largest organ of the human body, covering an area of about 2 square metres in adults and accounting for about 15% of body weight."},
+      {q:"Which organelle is responsible for protein synthesis?", o:["Nucleus","Mitochondria","Ribosome","Golgi body"], a:2, d:"medium", exp:"Ribosomes are responsible for protein synthesis. They translate mRNA sequences into amino acid chains to form proteins."},
+      {q:"What is the process by which plants lose water through their leaves?", o:["Osmosis","Transpiration","Respiration","Photosynthesis"], a:1, d:"medium", exp:"Transpiration is the process by which plants release water vapour through small pores called stomata, mainly found on the underside of leaves."},
+      {q:"Which type of reproduction does not involve two parents?", o:["Sexual reproduction","Asexual reproduction","Both","Neither"], a:1, d:"easy", exp:"Asexual reproduction involves only one parent and produces genetically identical offspring. Examples include binary fission in bacteria, budding in yeast, and vegetative propagation in plants."},
+      {q:"The unit of heredity is called:", o:["Chromosome","DNA","Gene","Nucleus"], a:2, d:"medium", exp:"A gene is the basic unit of heredity. It is a segment of DNA that encodes information for building a specific protein or controlling a specific trait."},
+      {q:"Which part of the brain controls balance and coordination?", o:["Cerebrum","Cerebellum","Medulla","Hypothalamus"], a:1, d:"hard", exp:"The cerebellum controls balance, coordination, and fine motor movements. It receives sensory information and regulates voluntary movement."},
+      {q:"Insulin is produced by which organ?", o:["Liver","Kidney","Pancreas","Stomach"], a:2, d:"medium", exp:"Insulin is a hormone produced by the beta cells of the islets of Langerhans in the pancreas. It regulates blood glucose levels."},
+      {q:"What is the process of cell division called?", o:["Mitosis","Meiosis","Both","Neither"], a:0, d:"medium", exp:"Mitosis is the process of cell division that produces two genetically identical daughter cells. Meiosis produces four genetically different cells (gametes) with half the chromosome number."},
+      {q:"Which gas do plants absorb during photosynthesis?", o:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"], a:2, d:"easy", exp:"Plants absorb carbon dioxide (CO₂) during photosynthesis. They combine it with water and sunlight energy to produce glucose and oxygen."},
+      {q:"The normal body temperature of humans is:", o:["36°C","37°C","38°C","39°C"], a:1, d:"easy", exp:"The normal human body temperature is approximately 37°C (98.6°F). A temperature above 38°C is considered a fever."},
+    ],
+
+    math: [
+      {q:"What is the value of π (pi) approximately?", o:["3.14159","3.14200","3.14100","3.15000"], a:0, d:"easy", exp:"Pi (π) is the ratio of a circle's circumference to its diameter. Its approximate value is 3.14159. It is an irrational number."},
+      {q:"If x + 5 = 12, what is the value of x?", o:["5","7","8","17"], a:1, d:"easy", exp:"x + 5 = 12 → x = 12 - 5 = 7. Simple linear equation solved by isolating the variable."},
+      {q:"What is the area of a circle with radius 7 cm? (π = 22/7)", o:["154 cm²","144 cm²","164 cm²","174 cm²"], a:0, d:"easy", exp:"Area = πr² = (22/7) × 7 × 7 = 22 × 7 = 154 cm²."},
+      {q:"The sum of angles in a triangle is:", o:["90°","180°","270°","360°"], a:1, d:"easy", exp:"The sum of all interior angles in any triangle is always 180°. This is a fundamental theorem of Euclidean geometry."},
+      {q:"What is 15% of 200?", o:["25","30","35","40"], a:1, d:"easy", exp:"15% of 200 = (15/100) × 200 = 15 × 2 = 30."},
+      {q:"Simplify: 2³ × 2⁴", o:["2⁷","2¹²","4⁷","2⁸"], a:0, d:"medium", exp:"When multiplying numbers with the same base, add the exponents: 2³ × 2⁴ = 2^(3+4) = 2⁷ = 128."},
+      {q:"What is the HCF of 12 and 18?", o:["3","4","6","9"], a:2, d:"easy", exp:"HCF (Highest Common Factor) of 12 and 18: Factors of 12: 1,2,3,4,6,12. Factors of 18: 1,2,3,6,9,18. HCF = 6."},
+      {q:"If a triangle has sides 3, 4, and 5, what type of triangle is it?", o:["Acute","Obtuse","Right-angled","Equilateral"], a:2, d:"medium", exp:"A 3-4-5 triangle is a right-angled triangle. Verify: 3² + 4² = 9 + 16 = 25 = 5². This is a Pythagorean triple."},
+      {q:"What is the LCM of 4 and 6?", o:["12","24","8","6"], a:0, d:"easy", exp:"LCM (Lowest Common Multiple) of 4 and 6: Multiples of 4: 4,8,12... Multiples of 6: 6,12... LCM = 12."},
+      {q:"Solve: 2x - 3 = 7", o:["x = 2","x = 5","x = 7","x = 4"], a:1, d:"easy", exp:"2x - 3 = 7 → 2x = 7 + 3 = 10 → x = 10/2 = 5."},
+      {q:"The perimeter of a rectangle with length 8 cm and width 5 cm is:", o:["26 cm","40 cm","13 cm","30 cm"], a:0, d:"easy", exp:"Perimeter of rectangle = 2(length + width) = 2(8 + 5) = 2 × 13 = 26 cm."},
+      {q:"What is the square root of 144?", o:["11","12","13","14"], a:1, d:"easy", exp:"√144 = 12 because 12 × 12 = 144. Perfect squares to remember: 1,4,9,16,25,36,49,64,81,100,121,144."},
+      {q:"If sin 30° = 0.5, what is sin 60°?", o:["0.5","0.707","0.866","1"], a:2, d:"medium", exp:"sin 60° = √3/2 ≈ 0.866. Standard trigonometric values: sin 30° = 0.5, sin 45° = 0.707, sin 60° = 0.866, sin 90° = 1."},
+      {q:"What is the value of cos 0°?", o:["0","0.5","1","-1"], a:2, d:"easy", exp:"cos 0° = 1. As the angle approaches 0°, the adjacent side equals the hypotenuse, giving a ratio of 1."},
+      {q:"A quadrilateral has how many sides?", o:["3","4","5","6"], a:1, d:"easy", exp:"A quadrilateral is a polygon with exactly 4 sides and 4 angles. The word comes from Latin 'quadri' (four) + 'latus' (side)."},
+      {q:"What is the slope of a horizontal line?", o:["1","-1","0","Undefined"], a:2, d:"medium", exp:"A horizontal line has a slope of 0 because there is no vertical change as you move along it. The formula rise/run = 0/run = 0."},
+      {q:"Factorise: x² - 9", o:["(x-3)(x-3)","(x+3)(x+3)","(x+3)(x-3)","(x-9)(x+1)"], a:2, d:"medium", exp:"x² - 9 is a difference of squares: a² - b² = (a+b)(a-b). So x² - 9 = x² - 3² = (x+3)(x-3)."},
+      {q:"The volume of a cube with side 4 cm is:", o:["16 cm³","48 cm³","64 cm³","32 cm³"], a:2, d:"easy", exp:"Volume of cube = side³ = 4³ = 4 × 4 × 4 = 64 cm³."},
+      {q:"What is the mean of 2, 4, 6, 8, 10?", o:["5","6","7","8"], a:1, d:"easy", exp:"Mean = Sum / Count = (2+4+6+8+10) / 5 = 30/5 = 6."},
+      {q:"In a right triangle, if one angle is 90° and another is 30°, the third angle is:", o:["30°","45°","60°","90°"], a:2, d:"easy", exp:"Sum of angles in triangle = 180°. So third angle = 180° - 90° - 30° = 60°."},
+      {q:"Simplify: (3x²)(4x³)", o:["7x⁵","12x⁵","12x⁶","7x⁶"], a:1, d:"medium", exp:"(3x²)(4x³) = 3×4 × x^(2+3) = 12x⁵. Multiply coefficients and add exponents for same base."},
+      {q:"What is the probability of getting heads when tossing a fair coin?", o:["1/4","1/3","1/2","2/3"], a:2, d:"easy", exp:"A fair coin has 2 outcomes (H or T). Probability of heads = 1/2 = 0.5 = 50%."},
+      {q:"The sum of first 10 natural numbers is:", o:["45","50","55","60"], a:2, d:"medium", exp:"Sum of first n natural numbers = n(n+1)/2 = 10×11/2 = 110/2 = 55."},
+      {q:"What is tan 45°?", o:["0","0.5","1","√3"], a:2, d:"medium", exp:"tan 45° = sin 45° / cos 45° = (√2/2)/(√2/2) = 1. At 45°, the opposite and adjacent sides are equal."},
+      {q:"The median of 3, 7, 2, 9, 5 is:", o:["5","7","4","3"], a:0, d:"medium", exp:"Arrange in order: 2, 3, 5, 7, 9. The middle value (3rd of 5) is 5. Median = 5."},
+      {q:"If the circumference of a circle is 44 cm, what is its radius? (π = 22/7)", o:["7 cm","14 cm","11 cm","3.5 cm"], a:0, d:"medium", exp:"C = 2πr → 44 = 2 × (22/7) × r → 44 = (44/7)r → r = 44 × 7/44 = 7 cm."},
+      {q:"Which of the following is a prime number?", o:["15","21","23","27"], a:2, d:"easy", exp:"23 is a prime number — it has no factors other than 1 and itself. 15=3×5, 21=3×7, 27=3×9."},
+      {q:"What is the value of 5! (5 factorial)?", o:["25","60","120","720"], a:2, d:"medium", exp:"5! = 5 × 4 × 3 × 2 × 1 = 120. Factorial is the product of all positive integers up to that number."},
+      {q:"Solve the inequality: 2x + 1 > 7", o:["x > 4","x > 3","x < 3","x < 4"], a:1, d:"medium", exp:"2x + 1 > 7 → 2x > 6 → x > 3. All values greater than 3 satisfy this inequality."},
+      {q:"The diagonal of a square with side 5 cm is:", o:["5√2 cm","5 cm","10 cm","25 cm"], a:0, d:"hard", exp:"By Pythagorean theorem: diagonal = √(5² + 5²) = √(25+25) = √50 = 5√2 ≈ 7.07 cm."},
+      {q:"What is 2⁻³?", o:["−8","−6","1/6","1/8"], a:3, d:"medium", exp:"2⁻³ = 1/2³ = 1/8. Negative exponent means reciprocal: a⁻ⁿ = 1/aⁿ."},
+      {q:"In a frequency distribution, mode is:", o:["The middle value","The average","The most frequent value","The sum"], a:2, d:"easy", exp:"Mode is the value that appears most frequently in a data set. A data set can have one mode, more than one mode, or no mode."},
+      {q:"The interior angle of a regular hexagon is:", o:["108°","120°","135°","144°"], a:1, d:"hard", exp:"Interior angle of regular n-gon = (n-2)×180°/n. For hexagon (n=6): (6-2)×180/6 = 4×30 = 120°."},
+      {q:"Rationalise the denominator: 1/√2", o:["√2","√2/2","2/√2","1/√2"], a:1, d:"medium", exp:"Multiply numerator and denominator by √2: (1×√2)/(√2×√2) = √2/2. This removes the surd from the denominator."},
+    ],
+
+    english: [
+      {q:"Which of the following is a synonym of 'happy'?", o:["Sad","Joyful","Angry","Tired"], a:1, d:"easy", exp:"Joyful is a synonym of happy — it means feeling or expressing great pleasure and happiness."},
+      {q:"What is the plural of 'child'?", o:["Childs","Children","Childrens","Childies"], a:1, d:"easy", exp:"The plural of 'child' is 'children' — an irregular plural that does not follow the standard -s rule."},
+      {q:"Which tense is used in: 'She has been studying for three hours'?", o:["Simple Present","Present Perfect","Present Perfect Continuous","Past Continuous"], a:2, d:"medium", exp:"'Has been studying' is Present Perfect Continuous tense. It describes an action that started in the past and is still continuing."},
+      {q:"Convert to passive voice: 'Ram writes a letter'", o:["A letter was written by Ram","A letter is written by Ram","A letter has been written by Ram","A letter will be written by Ram"], a:1, d:"medium", exp:"Simple present active → passive: Subject + is/am/are + past participle + by + agent. 'A letter is written by Ram.'"},
+      {q:"What is the antonym of 'ancient'?", o:["Old","Historic","Modern","Classical"], a:2, d:"easy", exp:"Ancient means very old or belonging to the distant past. Its antonym is modern, meaning relating to the present time."},
+      {q:"Choose the correct sentence:", o:["He don't know the answer","He doesn't knows the answer","He doesn't know the answer","He not knows the answer"], a:2, d:"easy", exp:"With third-person singular subject (he/she/it), use 'doesn't' + base verb. 'He doesn't know the answer' is correct."},
+      {q:"Which of the following is a conjunction?", o:["Quickly","Beautiful","Because","Very"], a:2, d:"easy", exp:"'Because' is a conjunction — it joins clauses and shows a cause-and-effect relationship. 'Quickly' is an adverb, 'Beautiful' is an adjective, 'Very' is an adverb."},
+      {q:"The word 'democracy' means:", o:["Rule by king","Rule by the people","Rule by army","Rule by priests"], a:1, d:"easy", exp:"Democracy comes from Greek 'demos' (people) + 'kratos' (rule). It means a system of government where people choose their representatives."},
+      {q:"Which figure of speech is used in: 'The wind whispered through the trees'?", o:["Simile","Metaphor","Personification","Alliteration"], a:2, d:"medium", exp:"Personification gives human qualities to non-human things. The wind cannot literally whisper — this is a human action attributed to a natural phenomenon."},
+      {q:"What does the idiom 'bite the bullet' mean?", o:["To eat something hard","To face a painful situation bravely","To shoot at something","To argue with someone"], a:1, d:"medium", exp:"'Bite the bullet' means to endure a painful or difficult situation with courage. It originated from soldiers biting bullets during surgery before anaesthesia."},
+      {q:"Choose the correct article: '__ university is a great institution.'", o:["A","An","The","No article"], a:0, d:"medium", exp:"Use 'a' before words starting with a consonant sound. 'University' starts with a /j/ sound (yoo-ni-ver-sity), so 'a university' is correct."},
+      {q:"Which of the following sentences is in the future perfect tense?", o:["I will go to school","I will have finished by 5 PM","I am going to school","I went to school"], a:1, d:"hard", exp:"Future Perfect tense: will + have + past participle. 'I will have finished by 5 PM' describes an action that will be complete by a future time."},
+      {q:"What is the correct spelling?", o:["Recieve","Receive","Recieve","Receve"], a:1, d:"easy", exp:"The correct spelling is 'Receive'. Remember the rule: 'i before e except after c'. After 'c', it is 'ei': receive, conceive, deceive."},
+      {q:"Which word is a noun in: 'The beautiful garden smells wonderful'?", o:["Beautiful","Garden","Smells","Wonderful"], a:1, d:"easy", exp:"'Garden' is a noun — it is a naming word referring to a place. 'Beautiful' and 'wonderful' are adjectives, 'smells' is a verb."},
+      {q:"'She is as brave as a lion.' This is an example of:", o:["Metaphor","Simile","Personification","Hyperbole"], a:1, d:"easy", exp:"A simile compares two things using 'as' or 'like'. 'As brave as a lion' uses 'as...as' to make a comparison — this is a simile."},
+      {q:"Change to reported speech: He said, 'I am tired.'", o:["He said that he is tired","He said that he was tired","He told he was tired","He said that I was tired"], a:1, d:"hard", exp:"In reported speech, present tense changes to past tense. 'Am' becomes 'was', and the pronoun 'I' changes to 'he'. Correct: 'He said that he was tired.'"},
+      {q:"What is the meaning of the prefix 'un-'?", o:["Before","Again","Not","After"], a:2, d:"easy", exp:"The prefix 'un-' means 'not' or 'reverse of'. Examples: unhappy (not happy), undo (reverse of do), unknown (not known)."},
+      {q:"Choose the correct form: 'Neither of the boys __ present.'", o:["are","were","is","have been"], a:2, d:"hard", exp:"'Neither' is singular and takes a singular verb. 'Neither of the boys is present' is grammatically correct."},
+      {q:"Which of the following is a complex sentence?", o:["She sang and danced","She sang a song","Although she was tired, she continued working","She was tired but continued working"], a:2, d:"medium", exp:"A complex sentence has one independent clause and one or more dependent clauses. 'Although she was tired' is a dependent clause joined to 'she continued working.'"},
+      {q:"The past tense of 'teach' is:", o:["Teached","Tought","Taught","Teaching"], a:2, d:"easy", exp:"The past tense of 'teach' is 'taught' — an irregular verb. Other irregular verbs: buy→bought, think→thought, bring→brought."},
+      {q:"What does 'verbose' mean?", o:["Brief and to the point","Using more words than needed","Impossible to understand","Very loud"], a:1, d:"hard", exp:"Verbose means using more words than necessary; long-winded. A verbose person or text uses excessive words to express something simple."},
+      {q:"Identify the preposition: 'The cat sat under the table.'", o:["cat","sat","under","table"], a:2, d:"easy", exp:"'Under' is a preposition showing the spatial relationship between the cat and the table. Prepositions show relationships of place, time, direction, etc."},
+      {q:"What literary device is: 'Peter Piper picked a peck of pickled peppers'?", o:["Assonance","Alliteration","Onomatopoeia","Rhyme"], a:1, d:"medium", exp:"Alliteration is the repetition of the same consonant sound at the beginning of closely connected words. All key words begin with 'p'."},
+      {q:"'He kicked the bucket.' This idiom means:", o:["He kicked a bucket","He died","He was angry","He left the room"], a:1, d:"medium", exp:"'Kicked the bucket' is an idiom meaning to die. Idioms cannot be understood from the literal meaning of their individual words."},
+      {q:"Which is the correct comparative form of 'good'?", o:["More good","Gooder","Better","Bester"], a:2, d:"easy", exp:"'Good' has an irregular comparative form: good → better → best. It does not follow the regular -er/-est or more/most pattern."},
+      {q:"A word that modifies a verb, adjective, or another adverb is called:", o:["Noun","Adjective","Adverb","Pronoun"], a:2, d:"easy", exp:"An adverb modifies verbs (ran quickly), adjectives (very tall), or other adverbs (really fast). Many adverbs end in -ly."},
+      {q:"Choose the correct sentence:", o:["I have went to Kathmandu","I have gone to Kathmandu","I have go to Kathmandu","I had go to Kathmandu"], a:1, d:"medium", exp:"Present Perfect tense: have/has + past participle. The past participle of 'go' is 'gone', not 'went'. 'I have gone to Kathmandu' is correct."},
+      {q:"What is the feminine gender of 'actor'?", o:["Actoress","Actress","Actress","Female actor"], a:1, d:"easy", exp:"The feminine gender of 'actor' is 'actress'. Other gender pairs: waiter/waitress, host/hostess, manager/manageress."},
+      {q:"'The boy ran fast.' What part of speech is 'fast' here?", o:["Adjective","Noun","Adverb","Verb"], a:2, d:"medium", exp:"'Fast' here modifies the verb 'ran' (how did he run? — fast), so it is an adverb. 'Fast' can also be an adjective (a fast car) or a noun (a religious fast)."},
+      {q:"Which sentence uses the subjunctive mood correctly?", o:["If I am rich, I will travel","If I were rich, I would travel","If I was rich, I will travel","If I be rich, I would travel"], a:1, d:"hard", exp:"The subjunctive mood uses 'were' (not 'was') for hypothetical/contrary-to-fact conditions. 'If I were rich, I would travel' is the grammatically correct subjunctive form."},
+    ],
+
+    computer: [
+      {q:"What does CPU stand for?", o:["Central Processing Unit","Computer Processing Unit","Central Program Unit","Computer Program Unit"], a:0, d:"easy", exp:"CPU stands for Central Processing Unit — the primary component of a computer that performs most of the processing. It is called the 'brain' of the computer."},
+      {q:"Which of the following is an input device?", o:["Monitor","Printer","Keyboard","Speaker"], a:2, d:"easy", exp:"A keyboard is an input device — it is used to enter data and commands into the computer. Monitor, Printer, and Speaker are output devices."},
+      {q:"What is the full form of RAM?", o:["Read Access Memory","Random Access Memory","Read And Memory","Random And Memory"], a:1, d:"easy", exp:"RAM stands for Random Access Memory. It is the computer's short-term memory where currently running programs and data are stored temporarily."},
+      {q:"Which storage device has the largest capacity typically?", o:["Floppy Disk","CD-ROM","Hard Disk Drive","USB Pen Drive"], a:2, d:"easy", exp:"Hard Disk Drives (HDD) typically have the largest storage capacity, ranging from hundreds of gigabytes to multiple terabytes."},
+      {q:"What does HTML stand for?", o:["Hyper Text Markup Language","High Text Markup Language","Hyper Transfer Markup Language","Hyper Text Making Language"], a:0, d:"easy", exp:"HTML stands for Hyper Text Markup Language. It is the standard language used to create and structure web pages."},
+      {q:"Which of the following is an operating system?", o:["Microsoft Word","Google Chrome","Windows 10","Adobe Photoshop"], a:2, d:"easy", exp:"Windows 10 is an operating system (OS) — software that manages computer hardware and provides services to programs. MS Word is an application, Chrome is a browser."},
+      {q:"What is the binary equivalent of decimal number 10?", o:["1010","1100","1001","0101"], a:0, d:"medium", exp:"Decimal 10 in binary: 10 ÷ 2 = 5 remainder 0; 5 ÷ 2 = 2 remainder 1; 2 ÷ 2 = 1 remainder 0; 1 ÷ 2 = 0 remainder 1. Reading remainders bottom-up: 1010."},
+      {q:"Which protocol is used to send emails?", o:["HTTP","FTP","SMTP","HTTPS"], a:2, d:"medium", exp:"SMTP (Simple Mail Transfer Protocol) is used to send emails. POP3 and IMAP are used to receive emails. HTTP is for web browsing."},
+      {q:"What does URL stand for?", o:["Uniform Resource Locator","Universal Resource Locator","Uniform Reference Link","Universal Reference Locator"], a:0, d:"easy", exp:"URL stands for Uniform Resource Locator — the web address used to access a specific resource on the internet. Example: https://www.google.com"},
+      {q:"Which of the following is NOT a programming language?", o:["Python","Java","HTML","C++"], a:2, d:"medium", exp:"HTML (HyperText Markup Language) is a markup language used for structuring web content, not a programming language. Python, Java, and C++ are programming languages."},
+      {q:"What is 1 Kilobyte (KB) equal to?", o:["100 bytes","512 bytes","1000 bytes","1024 bytes"], a:3, d:"medium", exp:"1 Kilobyte = 1024 bytes (2¹⁰ bytes). Similarly, 1 MB = 1024 KB, 1 GB = 1024 MB, 1 TB = 1024 GB."},
+      {q:"Which device connects a computer to the internet via telephone line?", o:["Router","Switch","Modem","Hub"], a:2, d:"medium", exp:"A modem (Modulator-Demodulator) converts digital computer signals to analog telephone signals and vice versa, enabling internet connection over telephone lines."},
+      {q:"The process of starting a computer is called:", o:["Booting","Formatting","Compiling","Processing"], a:0, d:"easy", exp:"Booting is the process of starting or restarting a computer. Cold booting means starting from a powered-off state; warm booting means restarting from a running state."},
+      {q:"Which of the following is a web browser?", o:["MS Excel","Adobe Reader","Mozilla Firefox","Windows Media Player"], a:2, d:"easy", exp:"Mozilla Firefox is a web browser used to access and navigate the internet. Other browsers include Chrome, Edge, Safari, and Opera."},
+      {q:"What does Wi-Fi stand for?", o:["Wireless Fidelity","Wireless Finder","Wide Fidelity","Wide Finder"], a:0, d:"medium", exp:"Wi-Fi stands for Wireless Fidelity. It is a technology that allows devices to connect to the internet wirelessly using radio waves."},
+      {q:"Which number system uses only digits 0 and 1?", o:["Decimal","Octal","Binary","Hexadecimal"], a:2, d:"easy", exp:"The binary number system uses only two digits: 0 and 1. It is the fundamental language of computers as electronic circuits represent data as on (1) or off (0)."},
+      {q:"What is the function of a firewall?", o:["Speed up internet","Store data","Block unauthorised network access","Cool the computer"], a:2, d:"medium", exp:"A firewall is a security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules, blocking unauthorised access."},
+      {q:"Which shortcut key is used to copy selected text in Windows?", o:["Ctrl + X","Ctrl + V","Ctrl + C","Ctrl + Z"], a:2, d:"easy", exp:"Ctrl + C is used to copy. Ctrl + X is cut, Ctrl + V is paste, Ctrl + Z is undo. These are standard Windows keyboard shortcuts."},
+      {q:"What does GUI stand for?", o:["General User Interface","Graphical User Interface","General Unix Interface","Graphical Unix Interface"], a:1, d:"easy", exp:"GUI stands for Graphical User Interface. It allows users to interact with computers using visual elements like icons, windows, and menus instead of text commands."},
+      {q:"Which of the following is a type of malware?", o:["Cookie","Virus","Cache","Plugin"], a:1, d:"easy", exp:"A computer virus is a type of malware — malicious software designed to damage or gain unauthorised access to computer systems. Cookies and cache are normal browser components."},
+      {q:"The internet was originally called:", o:["INTERNET","ARPANET","WORLDNET","WEBNET"], a:1, d:"hard", exp:"The internet originated from ARPANET (Advanced Research Projects Agency Network), developed by the US Department of Defense in the 1960s for military communication."},
+      {q:"What is the hexadecimal equivalent of decimal 255?", o:["EF","FE","FF","FA"], a:2, d:"hard", exp:"Decimal 255 = 15×16 + 15 = FF in hexadecimal (F = 15 in hex). 255 = 11111111 in binary."},
+      {q:"Which type of software is freely available and can be modified?", o:["Freeware","Shareware","Open Source","Proprietary"], a:2, d:"medium", exp:"Open Source software has its source code publicly available and can be freely used, modified, and distributed. Examples: Linux, Firefox, VLC. Freeware is free but closed source."},
+      {q:"What does CSS stand for?", o:["Computer Style Sheets","Cascading Style Sheets","Creative Style Sheets","Colorful Style Sheets"], a:1, d:"easy", exp:"CSS stands for Cascading Style Sheets. It is used to control the visual presentation of HTML web pages — colours, fonts, layouts, and spacing."},
+      {q:"Which component stores data permanently even when the computer is turned off?", o:["RAM","Cache","ROM","Register"], a:2, d:"medium", exp:"ROM (Read Only Memory) and storage devices like HDD/SSD store data permanently. RAM is volatile — it loses data when power is off. ROM is non-volatile."},
+      {q:"What is phishing?", o:["A type of fishing game","Fraudulent attempt to steal sensitive information","A programming technique","A type of virus scan"], a:1, d:"medium", exp:"Phishing is a cyberattack where fraudsters trick people into revealing sensitive information (passwords, credit cards) by posing as trustworthy entities via email or fake websites."},
+      {q:"The first generation of computers used:", o:["Transistors","Integrated circuits","Vacuum tubes","Microprocessors"], a:2, d:"medium", exp:"First generation computers (1940s-1950s) used vacuum tubes. Second gen used transistors, third gen used ICs, fourth gen (modern) use microprocessors."},
+      {q:"Which tag is used to create a hyperlink in HTML?", o:["<link>","<a>","<href>","<url>"], a:1, d:"medium", exp:"The <a> (anchor) tag is used to create hyperlinks in HTML. The href attribute specifies the URL: <a href='https://example.com'>Click here</a>"},
+      {q:"What is cloud computing?", o:["Computing done on airplanes","Storing and accessing data over the internet","A type of weather forecast software","Computing using solar energy"], a:1, d:"medium", exp:"Cloud computing means storing and accessing data and programs over the internet instead of your computer's hard drive. Examples: Google Drive, iCloud, Dropbox."},
+      {q:"Which of the following is a search engine?", o:["Facebook","WhatsApp","Google","Zoom"], a:2, d:"easy", exp:"Google is a search engine — a software system designed to search for information on the internet. Other search engines include Bing, Yahoo, and DuckDuckGo."},
+      {q:"What does HTTP stand for?", o:["Hyper Text Transfer Protocol","High Text Transfer Protocol","Hyper Transfer Text Protocol","High Transfer Text Protocol"], a:0, d:"easy", exp:"HTTP stands for HyperText Transfer Protocol. It is the foundation of data communication on the World Wide Web, used to transfer web pages from servers to browsers."},
+      {q:"The mouse was invented by:", o:["Bill Gates","Steve Jobs","Douglas Engelbart","Tim Berners-Lee"], a:2, d:"hard", exp:"The computer mouse was invented by Douglas Engelbart at Stanford Research Institute in 1964. Tim Berners-Lee invented the World Wide Web in 1989."},
+      {q:"Which memory is directly accessible by the CPU?", o:["Hard Disk","CD-ROM","RAM","USB Drive"], a:2, d:"medium", exp:"RAM (Random Access Memory) is directly accessible by the CPU. It is much faster than secondary storage (HDD/SSD) and holds currently running programs and data."},
+      {q:"What does VPN stand for?", o:["Virtual Private Network","Very Personal Network","Virtual Public Network","Verified Private Node"], a:0, d:"medium", exp:"VPN stands for Virtual Private Network. It creates an encrypted tunnel for your internet traffic, providing security and privacy by hiding your IP address and location."},
+      {q:"In MS Excel, which symbol is used to begin a formula?", o:["+","@","=","#"], a:2, d:"easy", exp:"In MS Excel, all formulas begin with the equals sign (=). Example: =SUM(A1:A10), =AVERAGE(B1:B5), =A1+B1. Without '=', Excel treats it as text."},
+      {q:"What is the function of the ALU in a CPU?", o:["Store data","Perform arithmetic and logical operations","Manage memory","Control input/output"], a:1, d:"medium", exp:"ALU stands for Arithmetic Logic Unit. It performs all arithmetic operations (addition, subtraction, multiplication, division) and logical operations (AND, OR, NOT, comparisons) in the CPU."},
+      {q:"Which file extension is associated with MS Word documents?", o:[".xls",".ppt",".docx",".pdf"], a:2, d:"easy", exp:".docx is the default file extension for Microsoft Word documents (since Office 2007). .xls/.xlsx is Excel, .ppt/.pptx is PowerPoint."},
+      {q:"What does IoT stand for?", o:["Internet of Things","Interface of Technology","Internet of Technology","Integrated of Things"], a:0, d:"medium", exp:"IoT stands for Internet of Things — a network of physical devices embedded with sensors and software to connect and exchange data over the internet. Examples: smart home devices, wearables."},
+      {q:"Which network covers the largest geographical area?", o:["LAN","MAN","WAN","PAN"], a:2, d:"medium", exp:"WAN (Wide Area Network) covers the largest geographical area — it can span countries or continents. LAN is local (a building), MAN is metropolitan (a city), PAN is personal (a few metres)."},
+      {q:"The process of converting source code into machine code is called:", o:["Debugging","Compiling","Executing","Interpreting"], a:1, d:"medium", exp:"Compiling is the process of translating high-level source code (C++, Java) into machine code (binary) that the CPU can execute. A compiler does this translation all at once."},
+      {q:"Which of the following is an example of system software?", o:["VLC Media Player","MS Paint","Windows OS","Google Chrome"], a:2, d:"easy", exp:"Windows OS is system software — it manages hardware resources and provides services to application software. VLC, MS Paint, and Chrome are application software."},
+      {q:"What is the main function of a router?", o:["Print documents","Connect devices within a network","Route data packets between networks","Store website data"], a:2, d:"medium", exp:"A router routes data packets between different networks. It reads destination IP addresses and forwards packets along the most efficient path across the internet."},
+      {q:"Which generation of computer introduced the concept of multiprogramming?", o:["First","Second","Third","Fourth"], a:2, d:"hard", exp:"Third generation computers (1960s-1970s) using integrated circuits introduced multiprogramming (running multiple programs simultaneously) and time-sharing operating systems."},
+      {q:"In a spreadsheet, what is a cell address?", o:["The cell's colour","The combination of column letter and row number","The cell's font","The cell's border style"], a:1, d:"easy", exp:"A cell address (or cell reference) is the unique identifier of a cell in a spreadsheet, made up of the column letter and row number. Example: A1, B5, C10."},
+      {q:"What does PDF stand for?", o:["Printed Document Format","Portable Document Format","Personal Document File","Primary Document Format"], a:1, d:"easy", exp:"PDF stands for Portable Document Format. Developed by Adobe, it is a file format that preserves document formatting and can be viewed on any device regardless of the software used."},
+      {q:"Which topology connects all devices in a single line?", o:["Star","Ring","Bus","Mesh"], a:2, d:"medium", exp:"Bus topology connects all devices to a single shared communication line (backbone). Star topology connects all devices to a central hub. Ring connects devices in a circular chain."},
+    ],
+
+    social: [
+      {q:"What is the capital city of Nepal?", o:["Pokhara","Butwal","Kathmandu","Lalitpur"], a:2, d:"easy", exp:"Kathmandu is the capital and largest city of Nepal. It is located in the Bagmati Province and is also the cultural, commercial, and political centre of Nepal."},
+      {q:"Nepal shares its border with which two countries?", o:["India and Pakistan","India and China","China and Bangladesh","India and Bhutan"], a:1, d:"easy", exp:"Nepal is a landlocked country bordered by India to the south, east, and west, and the Tibet Autonomous Region of China to the north."},
+      {q:"Mount Everest, the world's highest peak, is located in:", o:["Tibet","India","Nepal","Bhutan"], a:2, d:"easy", exp:"Mount Everest (8,848.86 m) is located in the Mahalangur Himal range on the border between Nepal and Tibet. It is known as Sagarmatha in Nepali."},
+      {q:"When did Nepal become a Federal Democratic Republic?", o:["2006","2007","2008","2009"], a:2, d:"medium", exp:"Nepal was declared a Federal Democratic Republic on May 28, 2008, when the Constituent Assembly abolished the 240-year-old Shah dynasty monarchy."},
+      {q:"Which river is the longest in Nepal?", o:["Koshi","Gandaki","Karnali","Bagmati"], a:2, d:"medium", exp:"The Karnali River is the longest river originating in Nepal, flowing about 507 km before joining the Ganges in India. The Koshi is the largest river system by volume."},
+      {q:"How many provinces does Nepal have?", o:["5","6","7","8"], a:2, d:"easy", exp:"Nepal has 7 provinces following the 2015 constitution. They are: Koshi, Madhesh, Bagmati, Gandaki, Lumbini, Karnali, and Sudurpashchim."},
+      {q:"Who is known as the 'Father of the Nation' of Nepal?", o:["B.P. Koirala","Prithvi Narayan Shah","Jung Bahadur Rana","King Tribhuvan"], a:1, d:"medium", exp:"Prithvi Narayan Shah is considered the father of the Nepali nation. He unified the many small kingdoms into one nation in 1768 and established the Shah dynasty."},
+      {q:"The highest mountain in the world is:", o:["K2","Kangchenjunga","Mount Everest","Lhotse"], a:2, d:"easy", exp:"Mount Everest at 8,848.86 metres (29,031.7 feet) is the highest mountain on Earth. It was first summited by Tenzing Norgay and Edmund Hillary on May 29, 1953."},
+      {q:"What is the national currency of Nepal?", o:["Dollar","Rupee","Taka","Euro"], a:1, d:"easy", exp:"The Nepali Rupee (NPR) is the official currency of Nepal. It is issued by Nepal Rastra Bank (NRB), the central bank of Nepal."},
+      {q:"Which district is Butwal located in?", o:["Palpa","Nawalparasi","Rupandehi","Kapilvastu"], a:2, d:"easy", exp:"Butwal is the headquarters of Rupandehi district in Lumbini Province (formerly Province No. 5). It is an important industrial and commercial city of Nepal."},
+      {q:"The birthplace of Lord Buddha is:", o:["Kathmandu","Varanasi","Lumbini","Bodh Gaya"], a:2, d:"easy", exp:"Lumbini, located in Rupandehi district of Nepal, is the birthplace of Siddhartha Gautama (Lord Buddha). It is a UNESCO World Heritage Site."},
+      {q:"What is the total area of Nepal?", o:["147,181 km²","157,181 km²","137,181 km²","167,181 km²"], a:0, d:"hard", exp:"Nepal has a total area of approximately 147,181 square kilometres, making it the 95th largest country in the world."},
+      {q:"The Great Himalayas form the northern boundary of Nepal with which country?", o:["India","Bhutan","China","Myanmar"], a:2, d:"easy", exp:"The Great Himalayan range forms the boundary between Nepal and the Tibet Autonomous Region of China in the north."},
+      {q:"Which is the highest lake in Nepal?", o:["Phewa Lake","Rara Lake","Tilicho Lake","Gosaikunda"], a:2, d:"hard", exp:"Tilicho Lake at 4,919 metres in the Manang district is considered one of the highest lakes in the world and the highest in Nepal."},
+      {q:"Nepal's national animal is:", o:["Tiger","Elephant","Cow","Snow Leopard"], a:2, d:"easy", exp:"The cow (gai) is the national animal of Nepal. It holds great religious significance in Hinduism and was traditionally protected by law."},
+      {q:"Which continent is Nepal part of?", o:["Africa","Europe","Asia","South America"], a:2, d:"easy", exp:"Nepal is located in South Asia, on the continent of Asia. It is situated between India and China in the southern part of the Himalayan mountain range."},
+      {q:"The Madhesh Province was previously known as:", o:["Province No. 1","Province No. 2","Province No. 3","Province No. 7"], a:1, d:"medium", exp:"Madhesh Province (Province No. 2 under the old numbering) was renamed in 2020. It is a terai province bordering India, known for its plains and agricultural land."},
+      {q:"Who was the first President of Nepal?", o:["Pushpa Kamal Dahal","Ram Baran Yadav","Bidhya Devi Bhandari","Madhav Kumar Nepal"], a:1, d:"medium", exp:"Dr. Ram Baran Yadav became the first President of Nepal on July 23, 2008, after Nepal was declared a Federal Democratic Republic in May 2008."},
+      {q:"The Bagmati River flows through which city?", o:["Pokhara","Butwal","Kathmandu","Dharan"], a:2, d:"easy", exp:"The Bagmati River flows through Kathmandu valley. It is a sacred river for both Hindus and Buddhists. The Pashupatinath Temple is located on its banks."},
+      {q:"Nepal adopted its current constitution in:", o:["2010","2012","2015","2018"], a:2, d:"medium", exp:"Nepal's current constitution was promulgated on September 20, 2015. It established Nepal as a federal democratic republic with three levels of government."},
+      {q:"Which of the following is a UNESCO World Heritage Site in Nepal?", o:["Phewa Lake","Trisuli River","Pashupatinath Temple","Muktinath Temple"], a:2, d:"medium", exp:"Pashupatinath Temple in Kathmandu is one of Nepal's seven UNESCO World Heritage Sites. Others include Boudhanath, Swayambhunath, Bhaktapur Durbar Square, etc."},
+      {q:"The Terai region of Nepal is characterized by:", o:["High mountains","Hilly terrain","Flat fertile plains","Desert land"], a:2, d:"easy", exp:"The Terai is the flat, low-lying region of Nepal in the south. It borders India, has fertile land, and contains much of Nepal's agricultural production and population."},
+      {q:"The headquarter of SAARC is located in:", o:["New Delhi","Dhaka","Kathmandu","Colombo"], a:2, d:"medium", exp:"The SAARC (South Asian Association for Regional Cooperation) Secretariat is located in Kathmandu, Nepal. SAARC was established in 1985 with 8 member countries."},
+      {q:"Democracy Day (Prajatantra Diwas) is celebrated in Nepal on:", o:["Falgun 7","Magh 1","Baishakh 1","Poush 15"], a:0, d:"hard", exp:"Democracy Day (Prajatantra Diwas) is celebrated on Falgun 7 (approximately February 19), commemorating the restoration of democracy in Nepal in 1951 (2007 BS)."},
+      {q:"Which organisation manages Nepal's monetary policy?", o:["Ministry of Finance","Nepal Stock Exchange","Nepal Rastra Bank","World Bank"], a:2, d:"medium", exp:"Nepal Rastra Bank (NRB), established in 1956, is the central bank of Nepal. It regulates monetary policy, manages foreign exchange reserves, and oversees the banking sector."},
+    ],
+
+    nepali: [
+      {q:"नेपाली वर्णमालामा स्वर वर्णको संख्या कति छ?", o:["१०","११","१२","१३"], a:2, d:"medium", exp:"नेपाली वर्णमालामा १२ स्वर वर्ण छन्: अ, आ, इ, ई, उ, ऊ, ऋ, ए, ऐ, ओ, औ, अं।"},
+      {q:"'आकाश' शब्दको पर्यायवाची के हो?", o:["भूमि","गगन","जल","वायु"], a:1, d:"easy", exp:"'आकाश' को पर्यायवाची 'गगन' हो। अन्य पर्यायवाची: नभ, व्योम, अम्बर, आसमान।"},
+      {q:"निम्न मध्ये कुन शब्द संज्ञा हो?", o:["राम्रो","हिँड्नु","पुस्तक","छिटो"], a:2, d:"easy", exp:"'पुस्तक' संज्ञा हो किनभने यो एउटा वस्तुको नाम हो। 'राम्रो' विशेषण, 'हिँड्नु' क्रिया, र 'छिटो' क्रियाविशेषण हो।"},
+      {q:"'घर' शब्दको बहुवचन के हो?", o:["घरहरु","घरहरू","घरहरूहरु","घरहरूहरू"], a:1, d:"easy", exp:"'घर' को बहुवचन 'घरहरू' हो। नेपालीमा बहुवचन बनाउन प्राय: '-हरू' प्रत्यय जोडिन्छ।"},
+      {q:"'सूर्य' शब्दको विलोम के हो?", o:["चन्द्र","तारा","अन्धकार","रात"], a:0, d:"medium", exp:"'सूर्य' को विलोम 'चन्द्र' (चन्द्रमा) हो। सूर्य दिनको प्रकाश दिन्छ भने चन्द्रमा रातको।"},
+      {q:"'मैले पानी पिएँ।' यस वाक्यमा कर्ता कुन हो?", o:["पानी","पिएँ","मैले","यस"], a:2, d:"easy", exp:"'मैले' कर्ता हो। कर्ता भनेको क्रिया गर्ने व्यक्ति वा वस्तु हो। यहाँ 'मैले' ले पिउने काम गरेको छ।"},
+      {q:"'विद्यालय' शब्दको अर्थ के हो?", o:["पाठशाला","घर","बगैँचा","बजार"], a:0, d:"easy", exp:"'विद्यालय' को अर्थ 'विद्या प्राप्त गरिने स्थान' अर्थात् स्कुल वा पाठशाला हो।"},
+      {q:"'राम्रो' शब्द कुन पदवर्गमा पर्छ?", o:["संज्ञा","सर्वनाम","विशेषण","क्रिया"], a:2, d:"easy", exp:"'राम्रो' विशेषण हो। विशेषण भनेको संज्ञाको गुण, दोष वा विशेषता बताउने शब्द हो। उदाहरण: राम्रो केटो, राम्रो घर।"},
+      {q:"'उसले खाना खायो।' वाक्यको कर्म कुन हो?", o:["उसले","खायो","खाना","हो"], a:2, d:"medium", exp:"'खाना' कर्म हो। कर्म भनेको क्रियाको प्रभाव पर्ने वस्तु वा व्यक्ति हो। यहाँ 'खाना' खाइएको छ।"},
+      {q:"नेपाली वर्णमालामा व्यञ्जन वर्णको संख्या कति छ?", o:["३३","३४","३५","३६"], a:0, d:"hard", exp:"नेपाली वर्णमालामा ३३ व्यञ्जन वर्ण छन्: क, ख, ग... म, य, र, ल, व, श, ष, स, ह।"},
+      {q:"'पानी' को समानार्थी शब्द कुन हो?", o:["आगो","जल","माटो","हावा"], a:1, d:"easy", exp:"'पानी' को समानार्थी (पर्यायवाची) शब्द 'जल' हो। अन्य पर्यायवाची: नीर, वारि, तोय, अम्बु।"},
+      {q:"'म स्कुल जान्छु।' यस वाक्यको काल कुन हो?", o:["भूत काल","वर्तमान काल","भविष्यत् काल","अनिश्चित काल"], a:1, d:"medium", exp:"'जान्छु' वर्तमान कालको क्रिया हो। वर्तमान कालले अहिले हुने वा सामान्य रूपमा हुने कार्य देखाउँछ।"},
+      {q:"संधि भनेको के हो?", o:["शब्दको अर्थ","दुई वर्णको मिलन","शब्दको विभाजन","वाक्यको प्रकार"], a:1, d:"medium", exp:"संधि भनेको दुई वर्ण वा शब्द मिलेर नयाँ शब्द बन्ने प्रक्रिया हो। उदाहरण: सूर्य + उदय = सूर्योदय।"},
+      {q:"'नेपाल' शब्दमा कति अक्षर छन्?", o:["२","३","४","५"], a:1, d:"easy", exp:"'नेपाल' शब्दमा ३ अक्षर छन्: ने-पा-ल। नेपाली भाषामा अक्षरलाई अलग-अलग बोलिने इकाइमा गनिन्छ।"},
+      {q:"'हात्ती' शब्दको लिङ्ग के हो?", o:["पुलिङ्ग","स्त्रीलिङ्ग","नपुंसकलिङ्ग","उभयलिङ्ग"], a:3, d:"hard", exp:"'हात्ती' शब्द उभयलिङ्ग हो किनभने यो नर र मादा दुवैका लागि प्रयोग गरिन्छ।"},
+      {q:"'आउनु' क्रियाको सामान्य भूतकालको रूप के हो?", o:["आउँछ","आयो","आउनेछ","आउँदैछ"], a:1, d:"medium", exp:"'आउनु' को सामान्य भूतकाल 'आयो' हो। भूतकालले भइसकेको कार्य देखाउँछ।"},
+      {q:"निम्न मध्ये शुद्ध वर्तनी कुन हो?", o:["परिक्षा","परीक्षा","परिक्षां","परिक्शा"], a:1, d:"medium", exp:"'परीक्षा' शुद्ध वर्तनी हो। यसमा दीर्घ ई (ई) प्रयोग हुन्छ।"},
+      {q:"'देश' शब्दको विलोम के हो?", o:["गाउँ","विदेश","शहर","प्रान्त"], a:1, d:"easy", exp:"'देश' को विलोम 'विदेश' हो। 'वि-' उपसर्ग लागेर विपरीत अर्थ दिन्छ — आफ्नो देश विरुद्ध अर्काको देश।"},
+      {q:"'सफल' मा कुन उपसर्ग छ?", o:["स","सफ","सफल","उपसर्ग छैन"], a:0, d:"hard", exp:"'सफल' शब्दमा 'स' उपसर्ग छ जसको अर्थ 'सहित' वा 'भएको' हो। सफल = फल सहित = फल पाएको।"},
+      {q:"व्याकरणमा 'कारक' भनेको के हो?", o:["क्रियाको प्रकार","संज्ञा र सर्वनामको क्रियासँगको सम्बन्ध","वर्णको प्रकार","शब्दको अर्थ"], a:1, d:"hard", exp:"कारक भनेको वाक्यमा संज्ञा वा सर्वनामको क्रियासँग हुने सम्बन्ध हो। कारकका प्रकार: कर्ता, कर्म, करण, सम्प्रदान, अपादान, सम्बन्ध, अधिकरण।"},
+      {q:"'हिमाल' शब्दमा कति मात्रा (vowel signs) छन्?", o:["०","१","२","३"], a:1, d:"hard", exp:"'हिमाल' शब्दमा 'ि' (इ को मात्रा) एउटा मात्रा छ। 'ह', 'म', 'ल' मा स्वतन्त्र स्वर छैन।"},
+    ],
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════════════════════════════
+  let selectedSubjects = [];
+  let quizQuestions    = [];
+  let currentIndex     = 0;
+  let score            = 0;
+  let answered         = false;
+  let timerInterval    = null;
+  let timeLeft         = 30;
+  let responses        = []; // {q, chosen, correct, skipped, subject}
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SUBJECT PICKER
+  // ═══════════════════════════════════════════════════════════════
+  document.getElementById('subjectPicker').addEventListener('click', e => {
+    const card = e.target.closest('.subject-card'); if (!card) return;
+    card.classList.toggle('selected');
+    const sub = card.dataset.subject;
+    if (card.classList.contains('selected')) {
+      selectedSubjects.push(sub);
+    } else {
+      selectedSubjects = selectedSubjects.filter(s => s !== sub);
+    }
+    document.getElementById('startBtn').disabled = selectedSubjects.length === 0;
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  //  START QUIZ
+  // ═══════════════════════════════════════════════════════════════
+  window.startQuiz = function() {
+    if (selectedSubjects.length === 0) return;
+    const countSetting = document.getElementById('qCount').value;
+    const diff         = document.getElementById('difficulty').value;
+
+    // Build pool from selected subjects
+    let pool = [];
+    selectedSubjects.forEach(sub => {
+      let qs = QB[sub] || [];
+      if (diff !== 'all') qs = qs.filter(q => q.d === diff);
+      qs.forEach(q => pool.push({ ...q, subject: sub }));
+    });
+
+    // Shuffle
+    pool = pool.sort(() => Math.random() - 0.5);
+
+    // Limit
+    const limit = countSetting === 'all' ? pool.length : Math.min(parseInt(countSetting), pool.length);
+    quizQuestions = pool.slice(0, limit);
+
+    if (quizQuestions.length === 0) {
+      alert('No questions found for selected subjects and difficulty. Try a different combination.');
+      return;
+    }
+
+    // Reset state
+    currentIndex = 0; score = 0; answered = false;
+    responses = [];
+
+    document.getElementById('homeScreen').style.display  = 'none';
+    document.getElementById('quizArena').style.display   = 'block';
+    document.getElementById('resultsScreen').style.display = 'none';
+
+    renderQuestion();
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  RENDER QUESTION
+  // ═══════════════════════════════════════════════════════════════
+  const LABELS = ['A','B','C','D'];
+  const SUBJECT_LABELS = { science:'Science', math:'Mathematics', english:'English', computer:'Computer', social:'Social Studies', nepali:'Nepali' };
+  const TIMER_SETTING  = () => parseInt(document.getElementById('timerSetting').value);
+
+  function renderQuestion() {
+    if (currentIndex >= quizQuestions.length) { showResults(); return; }
+    const q = quizQuestions[currentIndex];
+    answered = false;
+
+    // Progress
+    const pct = (currentIndex / quizQuestions.length) * 100;
+    document.getElementById('progressFill').style.width  = pct + '%';
+    document.getElementById('progressText').textContent  = `Question ${currentIndex+1} of ${quizQuestions.length}`;
+    document.getElementById('liveScore').textContent     = `Score: ${score}`;
+    document.getElementById('qSubjectBadge').textContent = SUBJECT_LABELS[q.subject] || q.subject;
+    document.getElementById('qNumber').textContent       = `Question ${currentIndex+1}`;
+    document.getElementById('qText').textContent         = q.q;
+    document.getElementById('explanation').classList.remove('show');
+    document.getElementById('nextBtn').disabled          = true;
+    document.getElementById('skipBtn').style.display     = 'inline';
+
+    // Options
+    document.getElementById('optionsGrid').innerHTML = q.o.map((opt, i) => `
+      <button class="option-btn" id="opt-${i}" onclick="selectOption(${i})">
+        <span class="option-letter">${LABELS[i]}</span>
+        ${opt}
+      </button>`).join('');
+
+    // Timer
+    const tSetting = TIMER_SETTING();
+    if (tSetting > 0) {
+      clearTimer();
+      timeLeft = tSetting;
+      const timerEl   = document.getElementById('timerDisplay');
+      const timerVal  = document.getElementById('timerVal');
+      timerEl.style.display = 'flex';
+      timerEl.className     = 'quiz-timer';
+      timerVal.textContent  = timeLeft;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerVal.textContent = timeLeft;
+        if (timeLeft <= 5) timerEl.classList.add('warning');
+        if (timeLeft <= 0) { clearTimer(); autoTimeout(); }
+      }, 1000);
+    } else {
+      document.getElementById('timerDisplay').style.display = 'none';
+    }
+
+    window.scrollTo({ top: document.getElementById('quizArena').offsetTop - 80, behavior: 'smooth' });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SELECT OPTION
+  // ═══════════════════════════════════════════════════════════════
+  window.selectOption = function(chosen) {
+    if (answered) return;
+    answered = true;
+    clearTimer();
+    const q = quizQuestions[currentIndex];
+    const correct = q.a;
+
+    // Disable all options
+    q.o.forEach((_, i) => {
+      const btn = document.getElementById(`opt-${i}`);
+      btn.disabled = true;
+      if (i === correct)  btn.classList.add(chosen === correct ? 'correct' : 'reveal-correct');
+      if (i === chosen && chosen !== correct) btn.classList.add('wrong');
+    });
+
+    // Score
+    const isCorrect = chosen === correct;
+    if (isCorrect) score++;
+
+    // Record
+    responses.push({ q: q.q, chosen, correct, skipped: false, subject: q.subject, opts: q.o });
+
+    // Explanation
+    if (q.exp) {
+      document.getElementById('explanationText').textContent = q.exp;
+      document.getElementById('explanation').classList.add('show');
+    }
+
+    document.getElementById('nextBtn').disabled   = false;
+    document.getElementById('skipBtn').style.display = 'none';
+    document.getElementById('liveScore').textContent = `Score: ${score}`;
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  AUTO TIMEOUT (timer ran out)
+  // ═══════════════════════════════════════════════════════════════
+  function autoTimeout() {
+    if (answered) return;
+    answered = true;
+    const q = quizQuestions[currentIndex];
+    q.o.forEach((_, i) => {
+      const btn = document.getElementById(`opt-${i}`);
+      btn.disabled = true;
+      if (i === q.a) btn.classList.add('reveal-correct');
+    });
+    responses.push({ q: q.q, chosen: -1, correct: q.a, skipped: true, subject: q.subject, opts: q.o });
+    if (q.exp) {
+      document.getElementById('explanationText').textContent = q.exp;
+      document.getElementById('explanation').classList.add('show');
+    }
+    document.getElementById('nextBtn').disabled   = false;
+    document.getElementById('skipBtn').style.display = 'none';
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SKIP
+  // ═══════════════════════════════════════════════════════════════
+  window.skipQuestion = function() {
+    if (answered) return;
+    clearTimer();
+    const q = quizQuestions[currentIndex];
+    responses.push({ q: q.q, chosen: -1, correct: q.a, skipped: true, subject: q.subject, opts: q.o });
+    currentIndex++;
+    renderQuestion();
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  NEXT
+  // ═══════════════════════════════════════════════════════════════
+  window.nextQuestion = function() {
+    currentIndex++;
+    renderQuestion();
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  CLEAR TIMER
+  // ═══════════════════════════════════════════════════════════════
+  function clearTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  QUIT CONFIRM
+  // ═══════════════════════════════════════════════════════════════
+  window.confirmQuit = function() {
+    if (confirm('Are you sure you want to quit the quiz?')) {
+      clearTimer();
+      document.getElementById('quizArena').style.display   = 'none';
+      document.getElementById('homeScreen').style.display  = 'block';
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  //  SHOW RESULTS
+  // ═══════════════════════════════════════════════════════════════
+  function showResults() {
+    clearTimer();
+    document.getElementById('quizArena').style.display     = 'none';
+    document.getElementById('resultsScreen').style.display = 'block';
+
+    const total   = quizQuestions.length;
+    const correct = responses.filter(r => !r.skipped && r.chosen === r.correct).length;
+    const wrong   = responses.filter(r => !r.skipped && r.chosen !== r.correct).length;
+    const skipped = responses.filter(r => r.skipped).length;
+    const pct     = Math.round((correct / total) * 100);
+
+    // Grade
+    let grade, msg;
+    if (pct >= 90) { grade = '🏆 Excellent!';      msg = 'Outstanding performance! You are well prepared for SEE.'; }
+    else if (pct >= 75) { grade = '🌟 Very Good!'; msg = 'Great work! A little more practice and you will ace SEE.'; }
+    else if (pct >= 60) { grade = '✅ Good';        msg = 'Good effort! Focus on the subjects you found difficult.'; }
+    else if (pct >= 45) { grade = '📚 Average';     msg = 'Keep practising. Review the questions you got wrong.'; }
+    else               { grade = '💪 Keep Going';   msg = 'Do not give up! Regular practice will improve your score.'; }
+
+    document.getElementById('rScore').textContent   = correct;
+    document.getElementById('rTotal').textContent   = `out of ${total}`;
+    document.getElementById('rGrade').textContent   = grade;
+    document.getElementById('rMsg').textContent     = msg;
+    document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rWrong').textContent   = wrong;
+    document.getElementById('rSkipped').textContent = skipped;
+    document.getElementById('rPct').textContent     = pct + '%';
+
+    // Subject breakdown
+    const subData = {};
+    responses.forEach(r => {
+      if (!subData[r.subject]) subData[r.subject] = { correct:0, total:0 };
+      subData[r.subject].total++;
+      if (!r.skipped && r.chosen === r.correct) subData[r.subject].correct++;
+    });
+
+    const bd = document.getElementById('subjectBreakdown');
+    bd.innerHTML = `<div class="breakdown-header">Score by Subject</div>` +
+      Object.entries(subData).map(([sub, d]) => {
+        const sp = Math.round((d.correct/d.total)*100);
+        return `<div class="breakdown-row">
+          <div class="bd-subject">${SUBJECT_LABELS[sub]||sub}</div>
+          <div class="bd-score">${d.correct}/${d.total}</div>
+          <div class="bd-bar-wrap"><div class="bd-bar-track"><div class="bd-bar-fill" style="width:${sp}%"></div></div></div>
+          <div class="bd-pct">${sp}%</div>
+        </div>`;
+      }).join('');
+
+    // Review
+    const reviewEl = document.getElementById('reviewList');
+    reviewEl.innerHTML = responses.map((r, i) => {
+      const statusClass = r.skipped ? 'skipped-q' : r.chosen === r.correct ? 'correct-q' : 'wrong-q';
+      const statusLabel = r.skipped ? '<span class="review-status st-skipped">Skipped</span>'
+        : r.chosen === r.correct ? '<span class="review-status st-correct">✓ Correct</span>'
+        : '<span class="review-status st-wrong">✗ Wrong</span>';
+      return `<div class="review-item ${statusClass}">
+        <div class="review-q-meta">${statusLabel}<span style="font-size:0.68rem;color:var(--ink-muted)">${SUBJECT_LABELS[r.subject]||r.subject} · Q${i+1}</span></div>
+        <div class="review-q-text">${r.q}</div>
+        <div class="review-answers">
+          Correct answer: <span>${r.opts[r.correct]}</span>
+          ${!r.skipped && r.chosen !== r.correct ? ` · Your answer: <del>${r.opts[r.chosen]}</del>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  RETAKE / HOME
+  // ═══════════════════════════════════════════════════════════════
+  window.retakeQuiz = function() {
+    document.getElementById('resultsScreen').style.display = 'none';
+    startQuiz();
+  };
+  window.goHome = function() {
+    document.getElementById('resultsScreen').style.display = 'none';
+    document.getElementById('homeScreen').style.display    = 'block';
+  };
+  </script>
+</body>
+</html>

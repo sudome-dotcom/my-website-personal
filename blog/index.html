@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Shishir Bhattarai</title>
+    <meta name="description" content="I build responsive websites and provide digital solutions for businesses and students in Nepal.">
+    <link rel="canonical" href="https://shishirbhattarai.com.np/blog.html">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../style.css">
+
+  <style>
+    /* ── BLOG-SPECIFIC STYLES (on top of site CSS) ── */
+    .blog-hero { padding: 8rem clamp(1.25rem,5vw,4rem) 3rem; max-width: 1100px; margin: 0 auto; }
+    .blog-controls {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 clamp(1.25rem,5vw,4rem) 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-wrap svg { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--ink-muted); pointer-events: none; }
+    #blogSearch {
+      width: 100%; padding: 0.65rem 1rem 0.65rem 2.6rem;
+      border: 1px solid var(--line); background: var(--white);
+      font-family: var(--sans); font-size: 0.88rem; color: var(--ink);
+      outline: none; transition: border-color 0.2s;
+    }
+    #blogSearch:focus { border-color: var(--terra); }
+    #blogSearch::placeholder { color: var(--ink-muted); opacity: 0.6; }
+    .cat-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .cat-btn {
+      font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.4rem 1rem; border: 1px solid var(--line);
+      background: transparent; color: var(--ink-muted); cursor: pointer; transition: all 0.18s;
+    }
+    .cat-btn:hover { border-color: var(--terra); color: var(--terra); }
+    .cat-btn.active { background: var(--terra); border-color: var(--terra); color: var(--white); }
+
+    .blog-layout {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 clamp(1.25rem,5vw,4rem) 6rem;
+      display: grid; grid-template-columns: 1fr 300px; gap: 3rem; align-items: start;
+    }
+
+    /* Post list */
+    .post-list { display: flex; flex-direction: column; gap: 1.5rem; }
+    .post-card {
+      background: var(--white); border: 1px solid var(--line);
+      padding: 1.8rem 2rem; cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .post-card:hover { border-color: var(--terra); transform: translateY(-3px); }
+    .post-card.featured { border-left: 3px solid var(--terra); }
+    .post-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.85rem; }
+    .post-cat {
+      font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--terra); font-weight: 500; background: var(--terra-pale);
+      padding: 0.2rem 0.65rem;
+    }
+    .featured-badge {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--white); background: var(--terra); padding: 0.18rem 0.55rem; margin-left: 0.5rem;
+    }
+    .post-date { font-size: 0.75rem; color: var(--ink-muted); white-space: nowrap; }
+    .post-title { font-family: var(--serif); font-size: 1.45rem; font-weight: 400; color: var(--ink); line-height: 1.25; margin-bottom: 0.6rem; }
+    .post-excerpt { font-size: 0.87rem; color: var(--ink-muted); line-height: 1.75; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .post-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .post-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--ink-muted); }
+    .post-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--terra-pale); display: flex; align-items: center; justify-content: center; color: var(--terra); font-size: 0.65rem; font-weight: 600; flex-shrink: 0; }
+    .post-read-more { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--terra); display: inline-flex; align-items: center; gap: 0.3rem; transition: gap 0.2s; }
+    .post-card:hover .post-read-more { gap: 0.5rem; }
+
+    .no-posts { text-align: center; padding: 3rem 1rem; color: var(--ink-muted); font-size: 0.9rem; display: none; }
+    .no-posts.visible { display: block; }
+    .no-posts svg { margin: 0 auto 1rem; display: block; opacity: 0.3; }
+
+    /* Sidebar */
+    .blog-sidebar { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 1.5rem; }
+    .sidebar-card { background: var(--white); border: 1px solid var(--line); padding: 1.5rem; }
+    .sidebar-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--ink); margin-bottom: 1rem; padding-bottom: 0.65rem; border-bottom: 1px solid var(--line); }
+    .about-mini { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.65rem; }
+    .about-mini-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--terra-pale); display: flex; align-items: center; justify-content: center; color: var(--terra); font-family: var(--serif); font-size: 1.2rem; font-weight: 600; }
+    .about-mini-name { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--ink); }
+    .about-mini-role { font-size: 0.75rem; color: var(--ink-muted); }
+    .about-mini-bio { font-size: 0.82rem; color: var(--ink-muted); line-height: 1.65; }
+    .about-mini-link { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terra); text-decoration: none; font-weight: 500; }
+    .popular-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .popular-item { display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer; padding: 0.4rem; transition: background 0.18s; }
+    .popular-item:hover { background: var(--terra-pale); }
+    .popular-num { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--terra); opacity: 0.35; line-height: 1; flex-shrink: 0; width: 22px; }
+    .popular-title { font-size: 0.83rem; color: var(--ink); line-height: 1.4; }
+    .popular-cat { font-size: 0.7rem; color: var(--ink-muted); margin-top: 0.12rem; }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag { font-size: 0.72rem; letter-spacing: 0.06em; padding: 0.25rem 0.7rem; background: var(--cream); border: 1px solid var(--line); color: var(--ink-muted); cursor: pointer; transition: all 0.18s; }
+    .tag:hover { border-color: var(--terra); color: var(--terra); background: var(--terra-pale); }
+
+    /* Single post */
+    #postView { display: none; }
+    #postView.visible { display: block; }
+    #blogListWrap.hidden { display: none; }
+    .post-full-wrap { max-width: 760px; margin: 0 auto; padding: 8rem clamp(1.25rem,5vw,4rem) 6rem; }
+    .post-back { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--ink-muted); cursor: pointer; margin-bottom: 2.5rem; transition: color 0.2s; border: none; background: none; padding: 0; font-family: var(--sans); }
+    .post-back:hover { color: var(--terra); }
+    .post-full-cat { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--terra); font-weight: 500; margin-bottom: 0.6rem; }
+    .post-full-title { font-family: var(--serif); font-size: clamp(1.9rem,4vw,2.8rem); font-weight: 300; line-height: 1.1; color: var(--ink); margin-bottom: 1rem; }
+    .post-full-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+    .post-full-author { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; color: var(--ink-muted); }
+    .post-full-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--terra-pale); display: flex; align-items: center; justify-content: center; color: var(--terra); font-size: 0.68rem; font-weight: 600; }
+    .post-full-date { font-size: 0.78rem; color: var(--ink-muted); }
+    .post-full-read { font-size: 0.7rem; letter-spacing: 0.06em; color: var(--ink-muted); background: var(--cream); padding: 0.2rem 0.6rem; border: 1px solid var(--line); }
+    .post-full-body { font-size: 0.95rem; line-height: 1.9; color: var(--ink-soft); }
+    .post-full-body h2 { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; color: var(--ink); margin: 2.5rem 0 0.8rem; line-height: 1.2; }
+    .post-full-body h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--ink); margin: 2rem 0 0.6rem; }
+    .post-full-body p { margin-bottom: 1.2rem; }
+    .post-full-body ul, .post-full-body ol { padding-left: 1.4rem; margin-bottom: 1.2rem; }
+    .post-full-body li { margin-bottom: 0.45rem; }
+    .post-full-body strong { color: var(--ink); font-weight: 500; }
+    .post-full-body a { color: var(--terra); text-decoration: none; border-bottom: 1px solid var(--terra-pale); }
+    .post-full-body a:hover { border-bottom-color: var(--terra); }
+    .post-full-body blockquote { border-left: 2px solid var(--terra); padding: 0.8rem 1.2rem; background: var(--terra-pale); margin: 1.5rem 0; font-style: italic; }
+    .post-full-body blockquote p { margin: 0; color: var(--ink); }
+    .post-full-body .code-block { background: var(--ink); color: var(--cream); padding: 1.2rem 1.5rem; font-family: monospace; font-size: 0.85rem; line-height: 1.6; overflow-x: auto; margin: 1.5rem 0; }
+    .post-full-body .tip-box { background: var(--terra-pale); border-left: 2px solid var(--terra); padding: 1rem 1.2rem; margin: 1.5rem 0; }
+    .post-full-body .tip-box strong { display: block; color: var(--terra); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .post-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+    .post-tag-label { font-size: 0.75rem; color: var(--ink-muted); align-self: center; }
+    .related-posts { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+    .related-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 1.2rem; }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 1rem; }
+    .related-card { background: var(--white); border: 1px solid var(--line); padding: 1.2rem; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+    .related-card:hover { border-color: var(--terra); transform: translateY(-2px); }
+    .related-cat { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--terra); font-weight: 500; margin-bottom: 0.4rem; }
+    .related-card-title { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--ink); line-height: 1.3; }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      .blog-layout { grid-template-columns: 1fr; }
+      .blog-sidebar { display: none; }
+    }
+    @media(max-width: 600px) {
+      .blog-hero { padding: 7rem 1.25rem 2rem; }
+      .blog-controls { padding: 0 1.25rem 1.5rem; flex-direction: column; align-items: stretch; }
+      .cat-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+      .cat-filters::-webkit-scrollbar { display: none; }
+      .cat-btn { white-space: nowrap; flex-shrink: 0; }
+      .blog-layout { padding: 0 1.25rem 4rem; }
+      .post-card { padding: 1.2rem; }
+      .post-card-top { flex-direction: column; gap: 0.3rem; }
+      .post-title { font-size: 1.2rem; }
+      .post-footer { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .post-full-wrap { padding: 7rem 1.25rem 4rem; }
+      .post-full-title { font-size: 1.7rem; }
+      .post-full-body .code-block { font-size: 0.78rem; padding: 0.9rem; }
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="subpage">
+
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/skills">Skills</a></li>
+      <li><a href="/qualification">Journey</a></li>
+      <li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li>
+      <li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li>
+      <li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li>
+      <li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li>
+      <li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- BLOG LIST -->
+  <div id="blogListWrap">
+    <div class="blog-hero">
+      <div class="section-label">Thoughts &amp; Articles</div>
+      <h2 class="section-title">The <em>Blog</em></h2>
+      <p class="tools-intro">Articles on web development, digital marketing, education, and technology — written from Butwal, Nepal.</p>
+    </div>
+    <div class="blog-controls">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="blogSearch" placeholder="Search articles…">
+      </div>
+      <div class="cat-filters" id="catFilters">
+        <button class="cat-btn active" data-cat="all">All</button>
+        <button class="cat-btn" data-cat="web-dev">Web Dev</button>
+        <button class="cat-btn" data-cat="teaching">Teaching</button>
+        <button class="cat-btn" data-cat="digital-marketing">Marketing</button>
+        <button class="cat-btn" data-cat="technology">Technology</button>
+        <button class="cat-btn" data-cat="career">Career</button>
+      </div>
+    </div>
+    <div class="blog-layout">
+      <div>
+        <div class="post-list" id="postList"></div>
+        <div class="no-posts" id="noPosts">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          No articles found. Try a different search or category.
+        </div>
+      </div>
+      <aside class="blog-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">About the Author</div>
+          <div class="about-mini">
+            <div class="about-mini-avatar">SB</div>
+            <div class="about-mini-name">Shishir Bhattarai</div>
+            <div class="about-mini-role">Educator · Web Developer · Marketer</div>
+            <div class="about-mini-bio">Based in Butwal, Nepal. Writing about teaching, web development, and growing in the digital world.</div>
+            <a href="/contact" class="about-mini-link">Get in touch →</a>
+          </div>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-title">Popular Articles</div>
+          <ul class="popular-list" id="popularList"></ul>
+        </div>
+        <div class="sidebar-card">
+          <div class="sidebar-title">Topics</div>
+          <div class="tag-cloud" id="tagCloud"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- SINGLE POST -->
+  <div id="postView">
+    <div class="post-full-wrap">
+      <button class="post-back" id="postBackBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        All Articles
+      </button>
+      <div id="postFullContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span>
+              <div style=" color:#7A6F68; font-family: var(--sans); font-size: 0.83rem;">Serving clients across Nepal, including Butwal.</div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal</p>
+  </footer>
+  <a href="#" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </a>
+
+  <script src="/script.js"></script>
+  <script>
+  const POSTS = [
+    { id:1, title:"How I Started Teaching Web Development in Butwal, Nepal", category:"teaching", catLabel:"Teaching", date:"May 15, 2025", readTime:"6 min read", featured:true,
+      excerpt:"Three years ago, I stood in front of a classroom of 20 students who had never opened a code editor. Here is what I learned from that journey and how teaching fundamentally changed the way I write code.",
+      tags:["Teaching","Nepal","Web Dev","Education"],
+      content:`<h2>Where It Began</h2><p>Teaching was never part of my original plan. I graduated with a BSc in Computer Science from Tribhuvan University in 2024, and like most graduates in Nepal, my first instinct was to find a software engineering role at a company in Kathmandu or abroad.</p><p>But life had a different direction for me. Back in Butwal, I found myself surrounded by young students who were curious about technology but had very limited access to quality, affordable instruction. Schools taught computing as a theory subject. Nobody was showing students how to actually build something.</p><blockquote><p>The moment a student's first webpage loads in the browser — that look on their face is something no salary can replace.</p></blockquote><h2>What I Taught First</h2><p>I started with pure HTML and CSS. No frameworks, no libraries — just a blank text file and a browser. Here is the very first piece of code I would have students type:</p><div class="code-block">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;&lt;title&gt;My First Page&lt;/title&gt;&lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;Hello, World!&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</div><p>Simple. But watching a student type those lines and then open the file in Chrome — seeing their name appear as a heading — was electric every single time.</p><h2>The Challenges</h2><p>Teaching in Nepal has real constraints. Power cuts, slow internet, limited computers shared among students. I had to design lessons that worked offline. I created printable notes, offline documentation packages, and step-by-step worksheets that students could follow without a live internet connection.</p><div class="tip-box"><strong>💡 Tip for Educators</strong>Always have an offline version of your lesson materials. In areas with unreliable connectivity, students who fall behind due to connectivity issues quickly lose motivation.</div><h2>What Teaching Taught Me</h2><p>The greatest irony of teaching is that you learn more than your students. Explaining a concept clearly forces you to understand it deeply.</p><ul><li><strong>Patience is a skill</strong> — it can be developed like any other</li><li><strong>Repetition is not failure</strong> — it is the architecture of learning</li><li><strong>Context matters enormously</strong> — examples from students' own lives stick</li><li><strong>Encouragement compounds</strong> — one positive word can unlock weeks of effort</li></ul>`
+    },
+    { id:2, title:"HTML vs CSS vs JavaScript: What's the Difference?", category:"web-dev", catLabel:"Web Dev", date:"May 8, 2025", readTime:"5 min read", featured:false,
+      excerpt:"If you're new to web development, the terms HTML, CSS, and JavaScript can feel overwhelming. Here's the clearest analogy I use with my own students to explain the difference in under five minutes.",
+      tags:["HTML","CSS","JavaScript","Beginners"],
+      content:`<h2>The House Analogy</h2><p>Every time I introduce a new student to web development, I use the same analogy: imagine building a house.</p><ul><li><strong>HTML is the structure</strong> — the walls, floors, doors, and windows. It gives the page its skeleton.</li><li><strong>CSS is the interior design</strong> — the paint colours, furniture arrangement, lighting. It makes things look good.</li><li><strong>JavaScript is the electricity</strong> — it makes things actually work. Switches turn on lights. Buttons do things.</li></ul><p>You can have a house with no paint (HTML only — it works but looks bare). You can have a beautifully painted house with no electricity (HTML + CSS — looks great, nothing interactive). But you cannot have electricity without a house first.</p><h2>Where to Start</h2><p>Always start with HTML. No exceptions. HTML is the foundation. CSS and JavaScript both rely on HTML elements to target and manipulate. HTML is forgiving. Browsers will render imperfect HTML without crashing. You can see results instantly.</p><div class="tip-box"><strong>🚀 Getting Started Today</strong>Open Notepad (Windows) or TextEdit (Mac), type a basic HTML structure, save as index.html, and double-click to open in your browser. You have just built your first webpage.</div><h2>A Realistic Learning Timeline</h2><p>Based on my experience teaching students in Nepal, here is a realistic timeline studying 1–2 hours per day:</p><ul><li><strong>Week 1–2:</strong> HTML basics — headings, paragraphs, links, images, lists</li><li><strong>Week 3–4:</strong> CSS basics — colours, fonts, spacing, the box model</li><li><strong>Week 5–8:</strong> CSS layout — Flexbox, Grid, responsive design</li><li><strong>Month 3–4:</strong> JavaScript fundamentals — variables, functions, DOM manipulation</li><li><strong>Month 5+:</strong> Build real projects. A portfolio site. A to-do list.</li></ul>`
+    },
+    { id:3, title:"What is SEO and Why Every Nepali Business Website Needs It", category:"digital-marketing", catLabel:"Marketing", date:"April 28, 2025", readTime:"7 min read", featured:false,
+      excerpt:"Most Nepali businesses have websites, but very few of those websites are actually found by customers online. SEO is the difference between a digital billboard nobody sees and a shop on the busiest street.",
+      tags:["SEO","Nepal","Digital Marketing","Business"],
+      content:`<h2>Why Most Nepali Business Websites Fail to Attract Customers</h2><p>I have built and managed websites for several local businesses in Butwal. The pattern is almost always the same: a beautiful website gets launched, the owner shares it on Facebook once, and then traffic flatlines within a week.</p><blockquote><p>A website without SEO is like a shop in a jungle — perfectly built, but nobody knows how to get there.</p></blockquote><h2>What is SEO, Really?</h2><p>Search Engine Optimisation (SEO) is the practice of making your website appear higher in Google search results when people search for what you offer. When someone in Butwal searches "best restaurant near me" or "web developer Nepal", SEO determines whose website appears at the top.</p><p>SEO has two main sides:</p><ul><li><strong>On-page SEO</strong> — things you do on your own website: the words you use, page titles, headings, image descriptions, page speed, mobile-friendliness</li><li><strong>Off-page SEO</strong> — things that happen outside your website: other sites linking to yours, your Google Business Profile, social media mentions</li></ul><div class="tip-box"><strong>✅ Start Here</strong>These are the highest-impact SEO improvements that cost nothing except your time.</div><ol><li><strong>Create a Google Business Profile.</strong> If you are a local business, this is the single most impactful thing you can do. It is free and puts you on Google Maps.</li><li><strong>Use the right keywords.</strong> Think about what your customers type into Google. Use those exact words naturally in your page headings and text.</li><li><strong>Make your site load fast.</strong> Compress images. Slow sites rank lower and lose visitors.</li><li><strong>Make it mobile-friendly.</strong> Over 80% of internet users in Nepal access the web via mobile.</li></ol>`
+    },
+    { id:4, title:"Free Tools Every Student in Nepal Should Know About", category:"technology", catLabel:"Technology", date:"April 15, 2025", readTime:"4 min read", featured:false,
+      excerpt:"You do not need expensive software or a fast computer to learn and create. Here are the best completely free tools for students in Nepal — from writing and design to coding and presentations.",
+      tags:["Tools","Students","Free","Nepal","Productivity"],
+      content:`<h2>The Best Free Tools for Nepali Students</h2><p>One of the biggest misconceptions I encounter as a teacher is that students need expensive software to learn and create. This is simply not true. In 2025, there is a free, high-quality alternative to almost every paid tool.</p><h2>For Writing and Documents</h2><ul><li><strong>Google Docs</strong> — Word processing, free, works offline, auto-saves.</li><li><strong>Notion</strong> — Note-taking, project organisation, and personal knowledge base.</li></ul><h2>For Learning to Code</h2><ul><li><strong>VS Code</strong> — The world's most popular code editor. Free, lightweight.</li><li><strong>freeCodeCamp.org</strong> — Full web development curriculum, completely free, with certificates.</li><li><strong>The Odin Project</strong> — Comprehensive full-stack curriculum, open source and free.</li><li><strong>Replit</strong> — Write and run code in a browser. No installation needed.</li></ul><h2>For Design</h2><ul><li><strong>Canva (free tier)</strong> — Presentations, posters, social media graphics.</li><li><strong>Figma (free tier)</strong> — Professional UI/UX design. Industry standard tool.</li></ul><div class="tip-box"><strong>💡 My Recommendation</strong>Do not download ten tools at once. Pick one from each category, learn it well for a month, then evaluate if you need something else.</div>`
+    },
+    { id:5, title:"How to Get Your First Freelance Client as a Web Developer in Nepal", category:"career", catLabel:"Career", date:"April 3, 2025", readTime:"8 min read", featured:false,
+      excerpt:"Getting your first freelance client is the hardest part. After the first one, the second is easier. Here is the exact approach I used when I was starting out, and what I have seen work for my students.",
+      tags:["Freelance","Career","Nepal","Web Dev","Money"],
+      content:`<h2>The First Client Problem</h2><p>Every freelancer remembers their first client. Getting them is the hardest part because of the classic catch-22: clients want experience, but you cannot get experience without clients.</p><p>Here is the truth: your first client will not come from a job posting. It will come from your personal network. This is true in Nepal more than almost anywhere, because trust-based relationships drive business decisions here.</p><h2>Step 1: Build Something Real First</h2><p>Before approaching anyone, build two or three real projects you are proud of. Ideas:</p><ul><li>Build a website for a local business that does not have one (for free — this is your portfolio piece)</li><li>Build a personal portfolio site that demonstrates your skills</li></ul><blockquote><p>In Nepal, word of mouth is still the most powerful marketing channel. One satisfied client will refer you to three others.</p></blockquote><h2>Step 2: Price Yourself Correctly</h2><p>Do not undercharge so much that you seem unqualified. For a first client in Nepal, a simple 5-page business website might be Rs. 15,000–30,000 depending on complexity. As you build your portfolio, rates can increase significantly.</p><h2>Step 3: Deliver Exceptionally and Ask for a Referral</h2><p>Over-deliver on your first project. Respond quickly. Fix problems without complaint. At the end, politely ask: "If you know anyone else who needs a website, I would really appreciate a referral."</p>`
+    },
+    { id:6, title:"Why I Teach in English (And Why You Should Learn Technology in English)", category:"teaching", catLabel:"Teaching", date:"March 22, 2025", readTime:"5 min read", featured:false,
+      excerpt:"This is a question I get often from students and parents: why do I teach web development in English when we are in Nepal? The answer has less to do with language and more to do with opportunity.",
+      tags:["English","Teaching","Career","Nepal"],
+      content:`<h2>The Language of Opportunity</h2><p>When one of my students opens a browser and types their first Google search about a programming problem, they will find the answer in English. Stack Overflow, MDN Web Docs, YouTube tutorials, GitHub repositories — the world's technology knowledge base is in English.</p><p>This is not an opinion or a cultural preference. It is simply the current reality of the global technology industry.</p><blockquote><p>The best programming teacher you will ever have is documentation. But only if you can read it.</p></blockquote><h2>My Approach</h2><p>I do not abandon Nepali in the classroom — I use it to explain concepts and build understanding. But I use English for all written materials, code comments, and technical vocabulary. This forces students to read and write technical English in a safe, supportive environment.</p><h2>Practical Advice</h2><ul><li>Start watching technology content on YouTube in English — even with Nepali subtitles at first</li><li>Write your code comments in English — it forces you to describe what your code does</li><li>Do not be embarrassed by imperfect English. Every programmer in the world writes broken English in some forum somewhere. Nobody cares.</li></ul><p>The investment in English for technology learners has the highest return of almost any skill you can develop in Nepal today.</p>`
+    }
+  ];
+
+  let activeCategory = 'all', searchQuery = '', currentPostId = null;
+
+  function renderPostList() {
+    const list = document.getElementById('postList');
+    const noPostsEl = document.getElementById('noPosts');
+    let filtered = POSTS.filter(p => {
+      const matchCat = activeCategory === 'all' || p.category === activeCategory;
+      const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery) || p.excerpt.toLowerCase().includes(searchQuery) || p.tags.some(t => t.toLowerCase().includes(searchQuery));
+      return matchCat && matchSearch;
+    });
+    noPostsEl.classList.toggle('visible', filtered.length === 0);
+    list.innerHTML = filtered.map(p => `
+      <article class="post-card${p.featured ? ' featured' : ''}" data-id="${p.id}">
+        <div class="post-card-top">
+          <div><span class="post-cat">${p.catLabel}</span>${p.featured ? '<span class="featured-badge">Featured</span>' : ''}</div>
+          <span class="post-date">${p.date}</span>
+        </div>
+        <div class="post-title">${p.title}</div>
+        <p class="post-excerpt">${p.excerpt}</p>
+        <div class="post-footer">
+          <div class="post-meta"><div class="post-avatar">SB</div><span>Shishir Bhattarai</span><span>·</span><span>${p.readTime}</span></div>
+          <span class="post-read-more">Read <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </article>`).join('');
+    list.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', () => openPost(parseInt(card.dataset.id))));
+  }
+
+  function renderPopularList() {
+    document.getElementById('popularList').innerHTML = POSTS.slice(0,4).map((p,i) => `
+      <li class="popular-item" data-id="${p.id}">
+        <span class="popular-num">0${i+1}</span>
+        <div><div class="popular-title">${p.title}</div><div class="popular-cat">${p.catLabel} · ${p.readTime}</div></div>
+      </li>`).join('');
+    document.querySelectorAll('.popular-item').forEach(item => item.addEventListener('click', () => openPost(parseInt(item.dataset.id))));
+  }
+
+  function renderTagCloud() {
+    const all = [...new Set(POSTS.flatMap(p => p.tags))];
+    document.getElementById('tagCloud').innerHTML = all.map(tag => `<span class="tag">${tag}</span>`).join('');
+    document.querySelectorAll('#tagCloud .tag').forEach(t => t.addEventListener('click', () => {
+      searchQuery = t.textContent.toLowerCase();
+      document.getElementById('blogSearch').value = t.textContent;
+      activeCategory = 'all';
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.cat-btn[data-cat="all"]').classList.add('active');
+      renderPostList();
+    }));
+  }
+
+  function openPost(id) {
+    const post = POSTS.find(p => p.id === id); if (!post) return;
+    currentPostId = id;
+    const related = POSTS.filter(p => p.id !== id && p.category === post.category).slice(0,3);
+    document.getElementById('postFullContent').innerHTML = `
+      <div class="post-full-cat">${post.catLabel}</div>
+      <h1 class="post-full-title">${post.title}</h1>
+      <div class="post-full-meta">
+        <div class="post-full-author"><div class="post-full-avatar">SB</div><span>Shishir Bhattarai</span></div>
+        <span class="post-full-date">${post.date}</span>
+        <span class="post-full-read">${post.readTime}</span>
+      </div>
+      <div class="post-full-body">${post.content}</div>
+      <div class="post-tags"><span class="post-tag-label">Tags:</span>${post.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      ${related.length ? `<div class="related-posts"><div class="related-title">More Articles</div><div class="related-grid">${related.map(r=>`<div class="related-card" data-id="${r.id}"><div class="related-cat">${r.catLabel}</div><div class="related-card-title">${r.title}</div></div>`).join('')}</div></div>` : ''}`;
+    document.querySelectorAll('.related-card').forEach(c => c.addEventListener('click', () => openPost(parseInt(c.dataset.id))));
+    document.querySelectorAll('#postFullContent .tag').forEach(t => t.addEventListener('click', () => { closePost(); searchQuery = t.textContent.toLowerCase(); document.getElementById('blogSearch').value = t.textContent; renderPostList(); }));
+    document.getElementById('blogListWrap').classList.add('hidden');
+    document.getElementById('postView').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function closePost() {
+    document.getElementById('blogListWrap').classList.remove('hidden');
+    document.getElementById('postView').classList.remove('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('postBackBtn').addEventListener('click', closePost);
+  document.getElementById('catFilters').addEventListener('click', e => {
+    const btn = e.target.closest('.cat-btn'); if (!btn) return;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); activeCategory = btn.dataset.cat; renderPostList();
+  });
+  document.getElementById('blogSearch').addEventListener('input', e => { searchQuery = e.target.value.trim().toLowerCase(); renderPostList(); });
+
+  renderPostList(); renderPopularList(); renderTagCloud();
+  </script>
+</body>
+</html>

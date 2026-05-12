@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Notes | Shishir Bhattarai</title>
+    <meta name="description" content="I build responsive websites and provide digital solutions for businesses and students in Nepal.">
+    <link rel="canonical" href="https://shishirbhattarai.com.np/notes.html">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../style.css">
+  <style>
+    /* ── NOTES PAGE LAYOUT ── */
+    .notes-hero {
+      padding: 8rem clamp(1.25rem, 5vw, 4rem) 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 5vw, 4rem) 6rem;
+      align-items: start;
+      gap: 0;
+    }
+
+    /* ── SIDEBAR ── */
+    .notes-sidebar {
+      position: sticky;
+      top: 90px;
+      padding-right: 2rem;
+      padding-top: 0.25rem;
+    }
+
+    .notes-sidebar-heading {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.65rem;
+      padding-left: 0.2rem;
+    }
+
+    .notes-sidebar-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 1.25rem 0;
+    }
+
+    .sidebar-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 0.45rem 0.7rem;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.18s;
+      margin-bottom: 0.05rem;
+    }
+
+    .sidebar-btn:hover {
+      background: var(--terra-pale);
+      color: var(--terra);
+    }
+
+    .sidebar-btn.active {
+      background: var(--terra-pale);
+      color: var(--terra);
+      font-weight: 500;
+    }
+
+    /* ── CONTENT ── */
+    .notes-content {
+      min-width: 0;
+    }
+
+    /* Search */
+    .notes-search-wrap {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .notes-search-wrap svg {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ink-muted);
+      pointer-events: none;
+    }
+
+    #notesSearch {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.6rem;
+      border: 1px solid var(--line);
+      background: var(--white);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    #notesSearch:focus {
+      border-color: var(--terra);
+    }
+
+    #notesSearch::placeholder {
+      color: var(--ink-muted);
+      opacity: 0.6;
+    }
+
+    /* Stats bar */
+    .notes-stats {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      background: var(--white);
+      border: 1px solid var(--line);
+      margin-bottom: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--terra);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* Subject group title */
+    .notes-group-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .notes-group-title span {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--terra);
+      background: var(--terra-pale);
+      padding: 0.18rem 0.6rem;
+    }
+
+    /* Notes grid */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Note card */
+    .note-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .note-card:hover {
+      border-color: var(--terra);
+      transform: translateY(-3px);
+    }
+
+    .note-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .note-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--terra);
+      flex-shrink: 0;
+    }
+
+    .note-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+    }
+
+    .badge-class {
+      background: #EEF3FF;
+      color: #3B5BDB;
+    }
+
+    .badge-subject {
+      background: var(--terra-pale);
+      color: var(--terra);
+    }
+
+    .note-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .note-desc {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      line-height: 1.7;
+    }
+
+    .note-meta {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      opacity: 0.7;
+    }
+
+    .note-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--terra);
+      border: 1px solid var(--line);
+      padding: 0.45rem 1rem;
+      text-decoration: none;
+      align-self: flex-start;
+      background: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .note-download:hover {
+      background: var(--terra);
+      border-color: var(--terra);
+      color: var(--white);
+    }
+
+    /* Empty state */
+    .notes-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 4rem 1rem;
+      color: var(--ink-muted);
+      text-align: center;
+      font-size: 0.9rem;
+      gap: 1rem;
+    }
+
+    .notes-empty.visible {
+      display: flex;
+    }
+
+    .notes-empty svg {
+      opacity: 0.3;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 900px) {
+      .notes-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .notes-sidebar {
+        position: static;
+        padding-right: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0.4rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+      }
+
+      .notes-sidebar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .notes-sidebar-heading {
+        display: none;
+      }
+
+      .notes-sidebar-divider {
+        display: none;
+      }
+
+      .sidebar-btn {
+        padding: 0.32rem 0.85rem;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.78rem;
+        width: auto;
+        display: inline-block;
+      }
+
+      .sidebar-btn.active {
+        border-color: var(--terra);
+      }
+    }
+
+    @media(max-width: 600px) {
+      .notes-hero {
+        padding: 7rem 1.25rem 2rem;
+      }
+
+      .notes-layout {
+        padding: 0 1.25rem 4rem;
+      }
+
+      .notes-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .notes-stats {
+        gap: 1.2rem;
+        padding: 0.85rem 1.1rem;
+      }
+
+      .note-card {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="subpage">
+
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/skills">Skills</a></li>
+      <li><a href="/qualification">Journey</a></li>
+      <li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li>
+      <li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li>
+      <li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li>
+      <li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li>
+      <li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/notes" class="mobile-link">Notes</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="notes-hero">
+    <div class="section-label">Teaching Tools · Resources</div>
+    <h2 class="section-title">Handwritten <em>Notes</em></h1>
+    <p class="tools-intro">Browse notes by subject or class. All notes are handwritten and available as PDF downloads.
+    </p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="notes-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="notes-sidebar" id="notesSidebar">
+      <div class="notes-sidebar-heading">By Subject</div>
+      <button class="sidebar-btn active" data-filter="subject" data-value="all">All Subjects</button>
+      <button class="sidebar-btn" data-filter="subject" data-value="computer">Computer</button>
+      <div class="notes-sidebar-divider"></div>
+      <div class="notes-sidebar-heading">By Class</div>
+      <button class="sidebar-btn active" data-filter="class" data-value="all-class">All Classes</button>
+      <button class="sidebar-btn" data-filter="class" data-value="10">Class 10</button>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="notes-content">
+      <div class="notes-search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="notesSearch" placeholder="Search notes by title or topic…">
+      </div>
+      <div class="notes-stats">
+        <div class="stat-item">
+          <div class="stat-num" id="statTotal">12</div>
+          <div class="stat-lbl">Total Notes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1</div>
+          <div class="stat-lbl">Subjects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1</div>
+          <div class="stat-lbl">Classes</div>
+        </div>
+      </div>
+      <div id="notesContainer"></div>
+      <div class="notes-empty" id="emptyState">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+        <p>No notes found. Try a different subject, class, or search term.</p>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span>
+              <div style=" color:#7A6F68; font-family: var(--sans); font-size: 0.83rem;">Serving clients across Nepal, including Butwal.</div>
+</div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14"
+            viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+          </svg></a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social"><svg width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg></a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social"><svg width="14" height="14"
+            viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg></a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal
+    </p>
+  </footer>
+
+  <a href="#" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  </a>
+
+  <script src="/script.js"></script>
+  <script>
+    const NOTES = [
+      { id: 10, title: "Computer Network & Communication", subject: "computer", subjectLabel: "Computer", class: "10", pages: 12, file: "../chapter 1.pdf", desc: "Learn about networking basics and how various communication technologies work.", icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>` },
+    ];
+
+    let activeSubject = 'all', activeClass = 'all-class', searchQuery = '';
+
+    function renderNotes() {
+      const container = document.getElementById('notesContainer');
+      const emptyState = document.getElementById('emptyState');
+      const statTotal = document.getElementById('statTotal');
+
+      const filtered = NOTES.filter(n => {
+        const mS = activeSubject === 'all' || n.subject === activeSubject;
+        const mC = activeClass === 'all-class' || n.class === activeClass;
+        const mQ = !searchQuery || n.title.toLowerCase().includes(searchQuery) || n.desc.toLowerCase().includes(searchQuery) || n.subjectLabel.toLowerCase().includes(searchQuery);
+        return mS && mC && mQ;
+      });
+
+      statTotal.textContent = filtered.length;
+      emptyState.classList.toggle('visible', filtered.length === 0);
+      if (!filtered.length) { container.innerHTML = ''; return; }
+
+      // Group by subject
+      const grouped = {};
+      filtered.forEach(n => { if (!grouped[n.subjectLabel]) grouped[n.subjectLabel] = []; grouped[n.subjectLabel].push(n); });
+
+      container.innerHTML = Object.entries(grouped).map(([label, notes]) => `
+      <div class="notes-group-title">${label} <span>${notes.length} note${notes.length !== 1 ? 's' : ''}</span></div>
+      <div class="notes-grid">
+        ${notes.map(n => `
+          <div class="note-card">
+            <div class="note-card-top">
+              <div class="note-icon">${n.icon}</div>
+              <div class="note-badges">
+                <span class="badge badge-class">Class ${n.class}</span>
+                <span class="badge badge-subject">${n.subjectLabel}</span>
+              </div>
+            </div>
+            <div class="note-title">${n.title}</div>
+            <div class="note-desc">${n.desc}</div>
+            <div class="note-meta">📄 ${n.pages} pages</div>
+            <a href="${n.file}" download class="note-download">
+              Download PDF
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </a>
+          </div>`).join('')}
+      </div>`).join('');
+    }
+
+    document.getElementById('notesSidebar').addEventListener('click', e => {
+      const btn = e.target.closest('.sidebar-btn'); if (!btn) return;
+      const { filter, value } = btn.dataset;
+      document.querySelectorAll(`.sidebar-btn[data-filter="${filter}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (filter === 'subject') activeSubject = value;
+      if (filter === 'class') activeClass = value;
+      renderNotes();
+    });
+
+    document.getElementById('notesSearch').addEventListener('input', e => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      renderNotes();
+    });
+
+    renderNotes();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Developer in Nepal | Shishir Bhattarai</title>
+    <meta name="description" content="I build responsive websites and provide digital solutions for businesses and students in Nepal.">
+    
+    <link rel="canonical" href="https://shishirbhattarai.com.np/">
+    
+    <!-- Performance: Preconnecting to Font Servers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="/" class="nav-logo">Shishir<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/skills">Skills</a></li>
+      <li><a href="/qualifications">Journey</a></li>
+      <li><a href="/tools">Teaching Tools</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/portfolio">Portfolio</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="nav-mobile" id="navMobile">
+    <ul>
+      <li><a href="/" class="mobile-link">Home</a></li>
+      <li><a href="/about" class="mobile-link">About</a></li>
+      <li><a href="/skills" class="mobile-link">Skills</a></li>
+      <li><a href="/qualification" class="mobile-link">Journey</a></li>
+      <li><a href="/tools" class="mobile-link">Teaching Tools</a></li>
+      <li><a href="/services" class="mobile-link">Services</a></li>
+      <li><a href="/portfolio" class="mobile-link">Portfolio</a></li>
+      <li><a href="/notes" class="mobile-link">Notes</a></li>
+      <li><a href="/blog" class="mobile-link">Blog</a></li>
+      <li><a href="/contact" class="mobile-link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-bg-line"></div>
+    <div class="hero-bg-dot"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-tag">Educator &amp; Developer</div>
+        <h1 class="hero-name">Shishir<br><em>Bhattarai</em></h1>
+        <p class="hero-role">Freelance Web Developer in Nepal</p>
+        <p class="hero-desc">Helping businesses create modern, user-friendly websites that actually work.</p>
+        <div class="hero-btns">
+          <a href="/contact/" class="btn-primary">
+            Hire Me
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="tools.html" class="btn-outline">Teaching Tools</a>
+        </div>
+        <div class="hero-socials">
+          <a href="https://www.facebook.com/sisironly" target="_blank" class="hero-social" title="Facebook">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+            </svg>
+          </a>
+          <a href="https://t.me/onlysisir" target="_blank" class="hero-social" title="Telegram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-17.5 7.03c-.95.383-.94 1.42.034 1.757l4.517 1.428 1.825 5.826c.226.72 1.136.95 1.665.427l2.48-2.413 4.815 3.538c.765.563 1.87.163 2.1-.756l3.5-14.5c.27-1.12-.64-2.05-1.414-1.552z" />
+            </svg>
+          </a>
+          <a href="https://wa.me/9779867537564/" target="_blank" class="hero-social" title="WhatsApp">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+              <path
+                d="M11.99 2C6.477 2 2 6.477 2 11.99c0 1.979.57 3.823 1.55 5.38L2 22l4.78-1.52A9.945 9.945 0 0 0 11.99 22C17.523 22 22 17.523 22 11.99 22 6.477 17.523 2 11.99 2z" />
+            </svg>
+          </a>
+          <a href="https://x.com/sisironly" target="_blank" class="hero-social" title="X / Twitter">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/onlysisir/" target="_blank" class="hero-social" title="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-img-frame">
+          <div class="hero-img-placeholder">
+            <!-- <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> -->
+            <img src="/sisir-bhattarai.png" alt="Freelance web developer in Nepal - Shishir Bhattarai" />
+            <span>Add your photo</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">3+</div>
+            <div class="hero-stat-label">Years teaching</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">5+</div>
+            <div class="hero-stat-label">Certifications</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">2+</div>
+            <div class="hero-stat-label">Companies</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- hidden file input -->
+  <input type="file" id="noteFileInput" accept="image/*,application/pdf" multiple style="display:none">
+
+
+  <!-- STUDENT FORM MODAL -->
+  <div class="modal-overlay" id="studentFormModal" onclick="handleModalClick(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeStudentForm()" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <div class="modal-title">Student Information Form</div>
+      <div class="modal-subtitle">All fields are required. Fill in details and download as Word document.</div>
+
+      <div class="form-grid">
+        <div class="form-sec-label">Personal details</div>
+
+        <div class="form-field">
+          <label>Full name <span class="req">*</span></label>
+          <input type="text" id="sf-name" placeholder="e.g. Aarav Sharma" oninput="sfValidate('name')"
+            onblur="sfValidate('name')">
+          <span class="errmsg" id="sf-name-err"></span>
+        </div>
+
+        <div class="form-field">
+          <label>Date of birth <span class="req">*</span></label>
+          <input type="date" id="sf-dob" oninput="sfValidate('dob')" onblur="sfValidate('dob')">
+          <span class="errmsg" id="sf-dob-err"></span>
+        </div>
+
+        <div class="form-field full">
+          <label>Address <span class="req">*</span></label>
+          <textarea id="sf-address" placeholder="House no., street, city, district, province..."
+            oninput="sfValidate('address')" onblur="sfValidate('address')"></textarea>
+          <span class="errmsg" id="sf-address-err"></span>
+        </div>
+
+        <div class="form-sec-label">Interests &amp; aspirations</div>
+
+        <div class="form-field">
+          <label>Hobby <span class="req">*</span></label>
+          <input type="text" id="sf-hobby" placeholder="e.g. Reading, Cricket" oninput="sfValidate('hobby')"
+            onblur="sfValidate('hobby')">
+          <span class="errmsg" id="sf-hobby-err"></span>
+        </div>
+
+        <div class="form-field">
+          <label>Aim / Career goal <span class="req">*</span></label>
+          <input type="text" id="sf-aim" placeholder="e.g. Doctor, Engineer" oninput="sfValidate('aim')"
+            onblur="sfValidate('aim')">
+          <span class="errmsg" id="sf-aim-err"></span>
+        </div>
+
+        <div class="form-sec-label">Family background</div>
+
+        <div class="form-field">
+          <label>Father's occupation <span class="req">*</span></label>
+          <input type="text" id="sf-fatherOcc" placeholder="e.g. Farmer, Teacher" oninput="sfValidate('fatherOcc')"
+            onblur="sfValidate('fatherOcc')">
+          <span class="errmsg" id="sf-fatherOcc-err"></span>
+        </div>
+
+        <div class="form-field">
+          <label>Mother's occupation <span class="req">*</span></label>
+          <input type="text" id="sf-motherOcc" placeholder="e.g. Homemaker, Nurse" oninput="sfValidate('motherOcc')"
+            onblur="sfValidate('motherOcc')">
+          <span class="errmsg" id="sf-motherOcc-err"></span>
+        </div>
+      </div>
+
+      <div class="form-progress" id="sf-progress">0 / 7 fields complete</div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="sfDownload()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download as Word
+        </button>
+        <button class="btn-outline" onclick="sfClear()">Clear</button>
+      </div>
+      <div class="form-status" id="sf-status-ok"
+        style="display:none;background:#eef7ee;color:#2d6a2d;border:1px solid #a8d4a8">
+        Word document downloaded successfully!
+      </div>
+      <div class="form-status" id="sf-status-err"
+        style="display:none;background:#fff0f0;color:#c0392b;border:1px solid #f5b9b9">
+        Please fix all errors before downloading.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-name">Shishir <span>Bhattarai</span>
+        <div style=" color:#7A6F68; font-family: var(--sans); font-size: 0.83rem;">Serving clients across Nepal, including Butwal.</div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="/about">About</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/portfolio">Portfolio</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="terms">Terms</a></li>
+      </ul>
+
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/sisironly" target="_blank" class="footer-social">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/onlysisir" target="_blank" class="footer-social">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </a>
+        <a href="https://x.com/sisironly" target="_blank" class="footer-social">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <p class="footer-copy">© <span id="footer-year"></span> Shishir Bhattarai · Educator &amp; Developer · Butwal, Nepal
+    </p>
+  </footer>
+
+  <a href="#home" class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  </a>
+ 
+
+  <!-- docx library for Word export -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+ <script src="script.js"></script>
+
+</body>
+
+</html>
