@@ -1,48 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<url><loc>https://shishirbhattarai.com.np/</loc></url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/about.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/contact.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/services.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/blog.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/notes.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/terms.html</loc>       
-</url>
-
-<url> <loc>https://shishirbhattarai.com.np/privacy-policy.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/portfolio.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/qualification.html</loc>
-</url>
-
-<url>
-<loc>https://shishirbhattarai.com.np/skills.html</loc>
-</url>
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/</loc>
+  </url>
 
   <url>
-<loc>https://shishirbhattarai.com.np/tools.html</loc>
-</url>
+    <loc>https://www.shishirbhattarai.com.np/about/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/blog/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/contact/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/notes/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/portfolio/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/privacy-policy/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/qualification/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/result-checker/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/see-quiz/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/services/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/skills/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/terms/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.shishirbhattarai.com.np/tools/</loc>
+  </url>
   
 </urlset>
